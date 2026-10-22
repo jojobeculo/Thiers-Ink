@@ -6,7 +6,8 @@
  * - révèle les éléments [data-reveal] une seule fois à leur entrée à l'écran ;
  * - anime les effets liés au défilement (niveau full uniquement) ;
  * - mesure brièvement la fluidité après le chargement et passe en lite si besoin ;
- * - gère les boutons [data-motion-toggle] (préférence du visiteur, stockée localement).
+ * - gère les boutons [data-motion-toggle] (préférence du visiteur, stockée localement) ;
+ * - anime les boutons [data-magnetic] et la barre de progression de lecture.
  */
 
 export type MotionTier = 'full' | 'lite' | 'reduced';
@@ -129,30 +130,43 @@ function initScrollEffects() {
   window.addEventListener('thiersink:motion', (e) => (e.detail.tier === 'full' ? start() : stop()));
 }
 
-/* Sonde de fluidité : une seconde de mesure, sans blocage ni collecte ----- */
+/* Sonde de fluidité ------------------------------------------------------
+   Une seconde de mesure juste après le chargement, AVANT le démarrage de la
+   scène WebGL (qui attend `probeDone`) : sans blocage ni collecte. */
+let resolveProbe: () => void = () => {};
+export const probeDone = new Promise<void>((resolve) => (resolveProbe = resolve));
+
 function probeSmoothness() {
-  if (getTier() !== 'full') return;
+  if (getTier() !== 'full') {
+    resolveProbe();
+    return;
+  }
   const run = () => {
     const samples: number[] = [];
-    let last = performance.now();
+    let last = 0;
+    let warmup = 8;
     const tick = (now: number) => {
+      if (warmup-- > 0) {
+        last = now;
+        requestAnimationFrame(tick);
+        return;
+      }
       samples.push(now - last);
       last = now;
-      if (samples.length < 60) {
+      if (samples.length < 45) {
         requestAnimationFrame(tick);
         return;
       }
       samples.sort((a, b) => a - b);
       const median = samples[Math.floor(samples.length / 2)];
-      // > 25 ms par image (< 40 i/s) : on allège les effets.
-      if (median > 25 && getTier() === 'full') setTier('lite');
+      // > 28 ms par image (< 36 i/s) avant même la 3D : on allège les effets.
+      if (median > 28 && getTier() === 'full') setTier('lite');
+      resolveProbe();
     };
     requestAnimationFrame(tick);
   };
-  const idle = (cb: () => void) =>
-    'requestIdleCallback' in window ? window.requestIdleCallback(cb, { timeout: 3000 }) : setTimeout(cb, 1500);
-  if (document.readyState === 'complete') idle(run);
-  else window.addEventListener('load', () => idle(run), { once: true });
+  if (document.readyState === 'complete') run();
+  else window.addEventListener('load', run, { once: true });
 }
 
 /* Préférence du visiteur --------------------------------------------------- */
@@ -161,17 +175,16 @@ function initToggles() {
   const sync = () => {
     const reduced = getTier() === 'reduced';
     toggles.forEach((btn) => {
-      btn.setAttribute('aria-pressed', String(reduced));
       const label = btn.querySelector('[data-motion-label]');
-      if (label) label.textContent = reduced ? 'Animations réduites' : 'Réduire les animations';
+      if (label) label.textContent = reduced ? 'Activer les animations' : 'Réduire les animations';
     });
   };
   toggles.forEach((btn) =>
     btn.addEventListener('click', () => {
       const reduce = getTier() !== 'reduced';
       try {
-        if (reduce) localStorage.setItem(STORAGE_KEY, 'reduced');
-        else localStorage.removeItem(STORAGE_KEY);
+        // « on » réactive les animations même si le système demande de les réduire
+        localStorage.setItem(STORAGE_KEY, reduce ? 'reduced' : 'on');
       } catch {
         /* stockage indisponible : la préférence vaut pour cette page */
       }
@@ -182,11 +195,53 @@ function initToggles() {
   sync();
 }
 
+/* Boutons magnétiques (full, souris) ---------------------------------------- */
+function initMagnetic() {
+  const items = document.querySelectorAll<HTMLElement>('[data-magnetic]');
+  items.forEach((el) => {
+    el.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || getTier() !== 'full') return;
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - (r.left + r.width / 2)) / r.width;
+      const y = (e.clientY - (r.top + r.height / 2)) / r.height;
+      el.style.setProperty('--mx', `${(x * 14).toFixed(1)}px`);
+      el.style.setProperty('--my', `${(y * 10).toFixed(1)}px`);
+    });
+    el.addEventListener('pointerleave', () => {
+      el.style.removeProperty('--mx');
+      el.style.removeProperty('--my');
+    });
+  });
+}
+
+/* Barre de progression de lecture ----------------------------------------- */
+function initProgress() {
+  const bar = document.querySelector<HTMLElement>('[data-progress]');
+  if (!bar) return;
+  let frame = 0;
+  const update = () => {
+    frame = 0;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.setProperty('--progress', max > 0 ? (window.scrollY / max).toFixed(4) : '0');
+  };
+  const schedule = () => {
+    if (!frame) frame = requestAnimationFrame(update);
+  };
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  update();
+}
+
 window.__thiersinkMotion = true;
-// Sans attribut (module chargé après le filet de sécurité) : contenu affiché tel quel.
+root.removeAttribute('data-reveal-fallback');
+// Sans attribut (JavaScript sans le script d'en-tête) : contenu affiché tel quel.
 initReveals();
 initToggles();
+initProgress();
 if (root.hasAttribute('data-motion')) {
   initScrollEffects();
+  initMagnetic();
   probeSmoothness();
+} else {
+  resolveProbe();
 }

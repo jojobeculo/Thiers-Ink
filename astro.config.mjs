@@ -31,6 +31,7 @@ export default defineConfig({
     ? [
         sitemap({
           filter: (page) => !page.includes('/demande'),
+          lastmod: new Date(),
         }),
       ]
     : [],
@@ -47,7 +48,6 @@ export default defineConfig({
         "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com",
         "font-src 'self'",
         "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
-        'frame-src https://www.openstreetmap.org',
         "base-uri 'self'",
         "form-action 'self'",
         "object-src 'none'",

@@ -1,10 +1,12 @@
 ---
 import SectionHeader from './SectionHeader.astro';
 import SplitHeading from './SplitHeading.astro';
+import BookingButton from './BookingButton.astro';
+import CallButton from './CallButton.astro';
 import { publishedFaq } from '../data/faq';
 ---
 
-<section class="faq section" id="faq" data-surface="light" aria-labelledby="faq-title">
+<section class="faq section" id="faq" data-surface="light" data-plane aria-labelledby="faq-title">
   <div class="container faq__grid">
     <div class="faq__head">
       <SectionHeader index="08" label="Questions" aside="Rendez-vous · Projet · Accès" />
@@ -26,6 +28,13 @@ import { publishedFaq } from '../data/faq';
           </details>
         ))
       }
+      <div class="faq__cta" data-reveal="fade">
+        <p class="faq__cta-text">Une autre question ? Le plus simple est d'en parler directement.</p>
+        <div class="faq__cta-actions">
+          <BookingButton />
+          <CallButton />
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -53,6 +62,27 @@ import { publishedFaq } from '../data/faq';
 
   .faq__item {
     border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .faq__cta {
+    display: grid;
+    gap: 18px;
+    padding-top: clamp(32px, 4vw, 48px);
+  }
+
+  .faq__cta-text {
+    font-size: var(--fs-body-lg);
+    line-height: var(--leading-body-lg);
+  }
+
+  .faq__cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  :global(html[data-motion='reduced']) .faq__item::details-content {
+    transition: none;
   }
 
   .faq__item--draft {

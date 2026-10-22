@@ -22,8 +22,7 @@ export const faq: FaqEntry[] = [
   {
     id: 'preparer',
     question: 'Que préciser dans une demande de tatouage ?',
-    answer:
-      "Décrivez le motif, l'emplacement sur le corps, la taille approximative et le style recherché. Plus la description est précise, plus l'échange avec le salon est simple.",
+    answer: `Décrivez le motif, l'emplacement sur le corps, la taille approximative et le style recherché. Plus la description est précise, plus l'échange avec le salon est simple. Tous les conseils sont sur la page <a href="${withBase('/tatouage-thiers')}">tatouage à Thiers</a>.`,
   },
   {
     id: 'reference',

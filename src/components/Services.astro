@@ -3,7 +3,9 @@ import { Picture } from 'astro:assets';
 import SectionHeader from './SectionHeader.astro';
 import SplitHeading from './SplitHeading.astro';
 import BookingButton from './BookingButton.astro';
+import CallButton from './CallButton.astro';
 import { services } from '../data/services';
+import { withBase } from '../config/site';
 ---
 
 <section class="services section" id="prestations" data-surface="light" data-plane aria-labelledby="prestations-title">
@@ -24,6 +26,12 @@ import { services } from '../data/services';
                   <li class="tag">{item}</li>
                 ))}
               </ul>
+              <a class="link t-ui service__more" href={withBase(service.path)}>
+                {service.name} à Thiers : en savoir plus
+                <svg viewBox="0 0 14 14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2" class="service__arrow">
+                  <path d="M1 7h11M8 3l4 4-4 4" />
+                </svg>
+              </a>
             </div>
           </li>
         ))
@@ -32,7 +40,10 @@ import { services } from '../data/services';
 
     <div class="services__cta" data-reveal="fade">
       <p class="t-muted">Tarifs et disponibilités : décrivez votre projet dans la demande de rendez-vous.</p>
-      <BookingButton />
+      <div class="services__actions">
+        <BookingButton size="lg" />
+        <CallButton withNumber={false} />
+      </div>
     </div>
   </div>
 
@@ -92,18 +103,26 @@ import { services } from '../data/services';
   .services {
     position: relative;
     z-index: 1;
-    background: transparent;
-    isolation: isolate;
   }
 
-  /* Le fond parchemin s'élargit à l'entrée de la section (niveau full). */
-  .services::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: var(--bg);
-    transform: scaleX(calc(0.9 + var(--plane, 1) * 0.1));
+  .service__more {
+    justify-self: start;
+  }
+
+  .service__arrow {
+    width: 12px;
+    height: 12px;
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+
+  .service__more:hover .service__arrow {
+    transform: translateX(4px);
+  }
+
+  .services__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
   .services :global(.services__title) {

@@ -2,6 +2,7 @@
 import SectionHeader from './SectionHeader.astro';
 import SplitHeading from './SplitHeading.astro';
 import ExternalIcon from './ExternalIcon.astro';
+import BookingButton from './BookingButton.astro';
 import { site } from '../config/site';
 
 const [firstName, ...rest] = site.owner.name.split(' ');
@@ -35,17 +36,13 @@ const [firstName, ...rest] = site.owner.name.split(' ');
           {site.owner.name} tient l'atelier {site.name} à {site.address.city} et y réalise tatouages et piercings.
         </p>
       </div>
-      <a
-        class="link t-ui"
-        href={site.social.instagram.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-reveal="fade"
-        style="--i:2"
-      >
-        Suivre son travail sur Instagram<span class="sr-only"> (nouvel onglet)</span>
-        <ExternalIcon />
-      </a>
+      <div class="artist__actions" data-reveal="fade" style="--i:2">
+        <BookingButton />
+        <a class="link t-ui" href={site.social.instagram.url} target="_blank" rel="noopener noreferrer">
+          Suivre son travail sur Instagram<span class="sr-only"> (nouvel onglet)</span>
+          <ExternalIcon />
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -138,6 +135,13 @@ const [firstName, ...rest] = site.owner.name.split(' ');
 
   .artist__role {
     color: var(--accent);
+  }
+
+  .artist__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 28px;
   }
 
   @media (max-width: 900px) {

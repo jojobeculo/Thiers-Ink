@@ -11,46 +11,28 @@ import Instagram from '../components/Instagram.astro';
 import Practical from '../components/Practical.astro';
 import Faq from '../components/Faq.astro';
 import Booking from '../components/Booking.astro';
-import { site, withBase } from '../config/site';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../config/site';
+import { faqJsonLd } from '../lib/seo';
+import { publishedFaq } from '../data/faq';
 
-// Données structurées : uniquement des informations publiques vérifiées.
-// Ni horaires ni note moyenne tant qu'elles ne sont pas confirmées.
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'TattooParlor',
-  name: site.name,
-  alternateName: site.altName,
-  description: site.description,
-  telephone: '+33612800989',
-  email: site.email,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: site.address.street,
-    postalCode: site.address.postalCode,
-    addressLocality: site.address.city,
-    addressRegion: site.address.region,
-    addressCountry: site.address.country,
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: site.address.geo.lat,
-    longitude: site.address.geo.lng,
-  },
-  // Instagram n'est déclaré qu'une fois confirmé par le propriétaire.
-  sameAs: [site.social.facebook, ...(site.social.instagram.confirmed ? [site.social.instagram.url] : [])],
-  ...(Astro.site
-    ? { url: new URL(withBase('/'), Astro.site).href, image: new URL(withBase('/og-thiersink.jpg'), Astro.site).href }
-    : {}),
-};
+// Le salon et le site sont ajoutés par BaseLayout ; la page y joint sa FAQ.
+const jsonLd = [faqJsonLd(publishedFaq.filter((f) => !f.draft))];
 ---
 
-<BaseLayout title={`${site.name} — Tatouage et piercing à Thiers (Puy-de-Dôme)`} jsonLd={jsonLd}>
+<BaseLayout title={`Salon de tatouage et piercing à Thiers (63) | ${site.name}`} jsonLd={jsonLd}>
   <div class="hero-stack">
     <Hero />
     <Atelier />
   </div>
   <Marquee label="L'atelier" items={['Tatouage', 'Piercing', 'Thiers', 'Puy-de-Dôme', 'Rue des Docteurs-Dumas']} />
   <Portfolio />
+  <CtaBand
+    id="cta-projet"
+    kicker="Tatouage & piercing à Thiers"
+    lines={['Un projet', 'en tête ?']}
+    text="Décrivez votre idée en quelques lignes : le salon vous répond pour convenir d'un rendez-vous."
+  />
   <Services />
   <Artist />
   <Reviews />

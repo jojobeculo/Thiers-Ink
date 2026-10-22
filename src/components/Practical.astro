@@ -2,11 +2,14 @@
 import SectionHeader from './SectionHeader.astro';
 import SplitHeading from './SplitHeading.astro';
 import ExternalIcon from './ExternalIcon.astro';
-import { site, mapLinks } from '../config/site';
+import BookingButton from './BookingButton.astro';
+import CallButton from './CallButton.astro';
+import { site, mapLinks, withBase } from '../config/site';
 
 const { lat, lng } = site.address.geo;
-const bbox = [lng - 0.0045, lat - 0.0025, lng + 0.0045, lat + 0.0025].map((n) => n.toFixed(6)).join(',');
-const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
+// Carte vectorielle aux couleurs du site, générée à partir des données OpenStreetMap
+// et servie par le site lui-même : aucune requête vers un service tiers.
+const mapSrc = withBase('/carte/thiers-docteurs-dumas.svg');
 
 const routes = [
   { label: 'Google Maps', href: mapLinks.google },
@@ -48,76 +51,118 @@ const routes = [
             </dd>
           </div>
           <div data-reveal="fade" style="--i:1">
-            <dt class="t-caption">Téléphone</dt>
-            <dd><a class="link" href={site.phone.href}>{site.phone.display}</a></dd>
-          </div>
-          <div data-reveal="fade" style="--i:2">
-            <dt class="t-caption">E-mail</dt>
-            <dd><a class="link practical__mail" href={`mailto:${site.email}`}>{site.email}</a></dd>
-          </div>
-          <div data-reveal="fade" style="--i:3">
             <dt class="t-caption">Horaires</dt>
             <dd>
               {
                 site.hours.length > 0 ? (
-                  <ul role="list">
-                    {site.hours.map((h) => (
-                      <li>
-                        {h.days} : {h.hours}
-                      </li>
-                    ))}
-                  </ul>
+                  <>
+                    <ul class="practical__hours" role="list">
+                      {site.hours.map((h) => (
+                        <li>
+                          <span>{h.days}</span>
+                          <span>{h.hours}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p class="practical__note t-muted">Horaires indicatifs : un appel permet de confirmer avant de venir.</p>
+                  </>
                 ) : (
                   <p>Pour connaître les horaires d'ouverture, appelez le salon.</p>
                 )
               }
             </dd>
           </div>
+          <div data-reveal="fade" style="--i:2">
+            <dt class="t-caption">Téléphone</dt>
+            <dd><a class="link" href={site.phone.href}>{site.phone.display}</a></dd>
+          </div>
+          <div data-reveal="fade" style="--i:3">
+            <dt class="t-caption">E-mail</dt>
+            <dd><a class="link practical__mail" href={`mailto:${site.email}`}>{site.email}</a></dd>
+          </div>
         </dl>
+
+        <div class="practical__actions" data-reveal="fade" style="--i:4">
+          <BookingButton />
+          <CallButton withNumber={false} />
+        </div>
       </div>
 
-      <div class="map" data-map data-reveal="mask">
-        <div class="map__placeholder" data-map-placeholder>
-          <svg class="map__grid" viewBox="0 0 400 400" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="0.6">
-            <path d="M0 80h400M0 160h400M0 240h400M0 320h400M80 0v400M160 0v400M240 0v400M320 0v400"></path>
-            <circle cx="200" cy="200" r="70" stroke-dasharray="2 5"></circle>
-            <circle cx="200" cy="200" r="130"></circle>
-          </svg>
-          <span class="map__pin" aria-hidden="true"></span>
-          <p class="map__coords t-caption" aria-hidden="true">
-            {lat.toFixed(4)}° N — {lng.toFixed(4)}° E
-          </p>
-          <div class="map__consent">
-            <button class="link t-ui map__load" type="button" data-map-load>Afficher la carte</button>
-            <p class="t-caption t-muted">
-              La carte est chargée depuis openstreetmap.org, qui reçoit alors votre adresse IP.
-            </p>
-          </div>
-        </div>
-        <template data-map-template>
-          <iframe
-            class="map__frame"
-            title={`Carte : ${site.name}, ${site.address.street}, ${site.address.city}`}
-            src={embed}
+      <figure class="map" data-map data-reveal="mask">
+        <div class="map__canvas" data-map-canvas>
+          <img
+            class="map__img"
+            src={mapSrc}
+            width="1000"
+            height="1000"
+            alt={`Plan du quartier : le salon ${site.name} se trouve au ${site.address.street}, à ${site.address.city}.`}
             loading="lazy"
-            referrerpolicy="no-referrer"></iframe>
-        </template>
-      </div>
+            decoding="async"
+          />
+        </div>
+        <span class="map__pin" aria-hidden="true"><span></span></span>
+        <div class="map__card" aria-hidden="true">
+          <span class="t-caption map__card-kicker">{site.name}</span>
+          <span class="map__card-street">{site.address.street}</span>
+          <span class="t-caption map__card-coords">{lat.toFixed(4)}° N — {lng.toFixed(4)}° E</span>
+        </div>
+        <a class="map__open btn btn--sm" href={mapLinks.google} target="_blank" rel="noopener noreferrer" data-cursor="link">
+          Itinéraire<span class="sr-only"> vers le salon (Google Maps, nouvel onglet)</span>
+          <ExternalIcon />
+        </a>
+        <figcaption class="map__credit">
+          © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">contributeurs OpenStreetMap</a>
+        </figcaption>
+      </figure>
     </div>
   </div>
 </section>
 
 <script>
+  import { getTier } from '../scripts/motion';
+
+  // La carte est intégrée au document quand elle approche de l'écran : ses rues
+  // peuvent alors se tracer une à une. Sans JavaScript, l'image <img> reste affichée.
   document.querySelectorAll<HTMLElement>('[data-map]').forEach((map) => {
-    const button = map.querySelector<HTMLButtonElement>('[data-map-load]');
-    const template = map.querySelector<HTMLTemplateElement>('[data-map-template]');
-    button?.addEventListener('click', () => {
-      if (!template) return;
-      const frame = template.content.firstElementChild?.cloneNode(true) as HTMLIFrameElement | undefined;
-      if (!frame) return;
-      map.append(frame);
-      map.querySelector('[data-map-placeholder]')?.remove();
-      frame.focus();
+    const holder = map.querySelector<HTMLElement>('[data-map-canvas]');
+    const img = holder?.querySelector('img');
+    if (!holder || !img) return;
+    const io = new IntersectionObserver(
+      async ([entry]) => {
+        if (!entry.isIntersecting) return;
+        io.disconnect();
+        if (getTier() === 'reduced') return;
+        try {
+          const response = await fetch(img.currentSrc || img.src);
+          if (!response.ok) return;
+          const markup = await response.text();
+          const doc = new DOMParser().parseFromString(markup, 'image/svg+xml');
+          const svg = doc.documentElement;
+          if (svg.nodeName.toLowerCase() !== 'svg') return;
+          svg.setAttribute('class', 'map__svg');
+          svg.setAttribute('aria-hidden', 'true');
+          svg.setAttribute('focusable', 'false');
+          img.classList.add('sr-only');
+          holder.append(document.importNode(svg, true));
+          requestAnimationFrame(() => requestAnimationFrame(() => map.classList.add('is-drawn')));
+        } catch {
+          /* l'image statique reste en place */
+        }
+      },
+      { rootMargin: '300px 0px' },
+    );
+    io.observe(map);
+
+    // inclinaison et zoom légers au survol (niveau full, souris)
+    map.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || getTier() !== 'full') return;
+      const r = map.getBoundingClientRect();
+      map.style.setProperty('--tx', `${(((e.clientX - r.left) / r.width - 0.5) * 6).toFixed(2)}deg`);
+      map.style.setProperty('--ty', `${(-((e.clientY - r.top) / r.height - 0.5) * 6).toFixed(2)}deg`);
+    });
+    map.addEventListener('pointerleave', () => {
+      map.style.removeProperty('--tx');
+      map.style.removeProperty('--ty');
     });
   });
 </script>
@@ -169,78 +214,196 @@ const routes = [
     margin-top: 12px;
   }
 
+  .practical__hours {
+    display: grid;
+    gap: 4px;
+  }
+
+  .practical__hours li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: 22rem;
+  }
+
+  .practical__note {
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
   .practical__mail {
     overflow-wrap: anywhere;
   }
 
+  .practical__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* Carte ------------------------------------------------------------------ */
   .map {
     grid-column: 7 / -1;
     position: relative;
     aspect-ratio: 1;
     min-width: 0;
+    margin: 0;
     border: 1px solid var(--color-graphite);
-    background: var(--color-soot);
+    background: #121110;
     overflow: hidden;
+    perspective: 1200px;
   }
 
-  .map__placeholder {
+  .map__canvas {
     position: absolute;
     inset: 0;
-    display: grid;
-    place-items: center;
-    color: var(--color-graphite);
+    transform: rotateX(var(--ty, 0deg)) rotateY(var(--tx, 0deg)) scale(1.04);
+    transition: transform 0.9s var(--ease-out-expo);
   }
 
-  .map__grid {
+  .map:hover .map__canvas {
+    transform: rotateX(var(--ty, 0deg)) rotateY(var(--tx, 0deg)) scale(1.08);
+  }
+
+  .map__img,
+  .map__canvas :global(.map__svg) {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
+    object-fit: cover;
   }
 
+  /* tracé des rues et apparition du bâti, une seule fois à l'arrivée */
+  .map__canvas :global(.map__svg .m-r:not(.m-r--path)),
+  .map__canvas :global(.map__svg .m-w) {
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 2.4s var(--ease-out-expo);
+  }
+
+  .map__canvas :global(.map__svg .m-r--path) {
+    opacity: 0;
+    transition: opacity 1.4s var(--ease-editorial) 0.8s;
+  }
+
+  .map__canvas :global(.map__svg .m-r--major) {
+    transition-delay: 0.1s;
+  }
+
+  .map__canvas :global(.map__svg .m-r--mid) {
+    transition-delay: 0.35s;
+  }
+
+  .map__canvas :global(.map__svg .m-r--minor) {
+    transition-delay: 0.6s;
+  }
+
+  .map__canvas :global(.map__svg .m-r--service) {
+    transition-delay: 0.85s;
+  }
+
+  .map__canvas :global(.map__svg .m-buildings),
+  .map__canvas :global(.map__svg .m-labels),
+  .map__canvas :global(.map__svg .m-parks) {
+    opacity: 0;
+    transition: opacity 1.6s var(--ease-editorial) 0.9s;
+  }
+
+  .map.is-drawn :global(.map__svg .m-r:not(.m-r--path)),
+  .map.is-drawn :global(.map__svg .m-w) {
+    stroke-dashoffset: 0;
+  }
+
+  .map.is-drawn :global(.map__svg .m-r--path),
+  .map.is-drawn :global(.map__svg .m-buildings),
+  .map.is-drawn :global(.map__svg .m-labels),
+  .map.is-drawn :global(.map__svg .m-parks) {
+    opacity: 1;
+  }
+
+  /* repère du salon */
   .map__pin {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 12px;
-    height: 12px;
-    margin: -6px 0 0 -6px;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
     border-radius: 50%;
     background: var(--color-saffron-glow);
-    box-shadow: 0 0 0 8px rgb(212 150 83 / 0.18);
+    box-shadow: 0 0 0 4px rgb(16 15 14 / 0.9);
   }
 
-  .map__coords {
+  .map__pin span {
     position: absolute;
-    top: 16px;
-    left: 16px;
-    color: var(--color-walnut);
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid var(--color-saffron-glow);
   }
 
-  .map__consent {
+  :global(html[data-motion='full']) .map__pin span,
+  :global(html[data-motion='lite']) .map__pin span {
+    animation: pin-pulse 2.6s var(--ease-out-expo) 8;
+  }
+
+  @keyframes pin-pulse {
+    from {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    to {
+      transform: scale(4.2);
+      opacity: 0;
+    }
+  }
+
+  .map__card {
     position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
+    left: calc(50% + 22px);
+    top: calc(50% - 30px);
     display: grid;
-    gap: 10px;
-    justify-items: start;
+    gap: 4px;
+    padding: 12px 14px;
+    background: rgb(16 15 14 / 0.88);
+    border: 1px solid var(--color-graphite);
+    border-left: 2px solid var(--color-saffron-glow);
+    pointer-events: none;
   }
 
-  .map__load {
-    min-height: 44px;
-    border: 0;
-    background-color: transparent;
+  .map__card-kicker {
+    color: var(--color-saffron-glow);
+  }
+
+  .map__card-street {
+    font-size: var(--fs-small);
     color: var(--color-parchment);
   }
 
-  .map__frame {
+  .map__card-coords {
+    color: var(--color-walnut);
+    font-size: 11px;
+  }
+
+  .map__open {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    filter: grayscale(1) invert(0.9) contrast(0.9) brightness(0.95);
+    left: 16px;
+    bottom: 16px;
+    background: rgb(16 15 14 / 0.88);
+  }
+
+  .map__credit {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 4px 8px;
+    font-size: 11px;
+    color: var(--color-walnut);
+    background: rgb(16 15 14 / 0.85);
+  }
+
+  .map__credit a {
+    color: inherit;
   }
 
   @media (max-width: 900px) {
@@ -257,6 +420,15 @@ const routes = [
     .practical__list > div {
       grid-template-columns: 1fr;
       gap: 4px;
+    }
+    .map {
+      aspect-ratio: 1;
+    }
+    .map__card {
+      left: 50%;
+      top: auto;
+      bottom: calc(50% + 20px);
+      transform: translateX(-50%);
     }
   }
 </style>

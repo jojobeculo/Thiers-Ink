@@ -10,6 +10,8 @@ export interface Service {
   items: string[];
   preview: ImageMetadata;
   previewAlt: string;
+  /** Page dédiée (référencement local). */
+  path: string;
 }
 
 // Prestations relevées sur les sources publiques : tatouage et piercing
@@ -24,6 +26,7 @@ export const services: Service[] = [
     items: ['Motif', 'Emplacement', 'Taille', 'Style'],
     preview: encre01,
     previewAlt: '',
+    path: '/tatouage-thiers',
   },
   {
     id: 'piercing',
@@ -32,5 +35,6 @@ export const services: Service[] = [
     items: ['Oreille', 'Nez', 'Corps'],
     preview: dotwork,
     previewAlt: '',
+    path: '/piercing-thiers',
   },
 ];

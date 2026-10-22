@@ -2,9 +2,10 @@
 // Il est aussi importé par astro.config.mjs pour calculer son empreinte CSP :
 // toute modification est donc prise en compte automatiquement.
 //
-// Niveaux : full (ordinateur performant), lite (tactile, petit écran, appareil
-// moyen), reduced (préférence système ou du visiteur, appareil modeste, économie
-// de données). Aucune donnée n'est collectée ni envoyée.
+// Niveaux : full (ordinateur), lite (écran tactile, petit écran, appareil très
+// modeste ou économie de données), reduced (réglage « réduire les animations » du
+// système ou du visiteur : fondus simples, sans déplacement). Le visiteur peut
+// réactiver les animations depuis le pied de page. Aucune donnée n'est collectée.
 export const MOTION_TIER_SCRIPT = `(function () {
   var d = document.documentElement;
   d.classList.add('js');
@@ -16,13 +17,9 @@ export const MOTION_TIER_SCRIPT = `(function () {
   var cores = n.hardwareConcurrency || 0;
   var mem = n.deviceMemory || 0;
   var tier = 'full';
-  if (mq('(prefers-reduced-motion: reduce)') || !('IntersectionObserver' in window) || c.saveData || (cores && cores <= 2) || (mem && mem <= 2)) {
-    tier = 'reduced';
-  } else if (mq('(pointer: coarse)') || mq('(max-width: 820px)') || (cores && cores <= 4) || (mem && mem <= 4)) {
-    tier = 'lite';
-  }
+  if (mq('(pointer: coarse)') || mq('(max-width: 820px)') || c.saveData || (cores && cores <= 2) || (mem && mem <= 2)) tier = 'lite';
   window.__thiersinkAutoTier = tier;
-  if (pref === 'reduced') tier = 'reduced';
+  if (!('IntersectionObserver' in window) || pref === 'reduced' || (pref !== 'on' && mq('(prefers-reduced-motion: reduce)'))) tier = 'reduced';
   d.setAttribute('data-motion', tier);
-  setTimeout(function () { if (!window.__thiersinkMotion) d.removeAttribute('data-motion'); }, 4000);
+  setTimeout(function () { if (!window.__thiersinkMotion) d.setAttribute('data-reveal-fallback', ''); }, 6000);
 })();`;

@@ -2,6 +2,8 @@
 import SectionHeader from './SectionHeader.astro';
 import SplitHeading from './SplitHeading.astro';
 import MaskedImage from './MaskedImage.astro';
+import BookingButton from './BookingButton.astro';
+import CallButton from './CallButton.astro';
 import { site } from '../config/site';
 import encre02 from '../assets/images/etudes/encre-02.jpg';
 ---
@@ -42,6 +44,11 @@ import encre02 from '../assets/images/etudes/encre-02.jpg';
             <dd><a class="link" href={site.phone.href}>{site.phone.display}</a></dd>
           </div>
         </dl>
+
+        <div class="atelier__actions" data-reveal="fade" style="--i:3">
+          <BookingButton />
+          <CallButton withNumber={false} />
+        </div>
       </div>
     </div>
 
@@ -88,6 +95,12 @@ import encre02 from '../assets/images/etudes/encre-02.jpg';
 
   .atelier__body {
     color: var(--fg-muted);
+  }
+
+  .atelier__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
   .atelier__facts {

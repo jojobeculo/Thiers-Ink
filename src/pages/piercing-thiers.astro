@@ -1,0 +1,47 @@
+---
+import ServiceLayout from '../layouts/ServiceLayout.astro';
+import dotwork from '../assets/images/etudes/dotwork.jpg';
+import { site } from '../config/site';
+---
+
+<ServiceLayout
+  path="/piercing-thiers"
+  name="Piercing"
+  title={`Piercing à Thiers (63) — oreille, nez, corps | ${site.name}`}
+  description={`Piercing à Thiers (Puy-de-Dôme) au salon ${site.name}, 43 rue des Docteurs-Dumas : piercing d'oreille, de nez et piercing corporel. Rendez-vous en ligne ou au ${site.phone.display}.`}
+  heading={['Piercing', 'à Thiers']}
+  lead={`${site.name} réalise des piercings au ${site.address.street}, à ${site.address.city} (Puy-de-Dôme) : piercing de l’oreille, du nez et piercing corporel.`}
+  items={['Oreille', 'Nez', 'Corps']}
+  steps={[
+    {
+      title: 'Indiquez la zone',
+      text: 'Avec le formulaire de rendez-vous ou par téléphone : la zone à percer et, si vous le souhaitez, une photo de référence.',
+    },
+    {
+      title: 'Posez vos questions',
+      text: 'Une première fois, un piercing particulier : précisez-le dans votre message pour en parler avec le salon.',
+    },
+    {
+      title: 'Convenez d’un rendez-vous',
+      text: 'Le salon vous répond par e-mail ou par téléphone pour fixer une date.',
+    },
+  ]}
+  tips={[
+    {
+      title: 'Choisissez l’emplacement',
+      text: 'Oreille, nez ou autre zone du corps : indiquez-la précisément dans votre demande.',
+    },
+    {
+      title: 'Montrez une référence',
+      text: 'Une photo d’un piercing qui vous plaît aide à décrire le placement souhaité.',
+    },
+    {
+      title: 'Notez vos questions',
+      text: 'Le rendez-vous est le bon moment pour poser toutes les questions sur le piercing envisagé.',
+    },
+  ]}
+  faqIds={['rendez-vous', 'reference', 'adresse']}
+  image={dotwork}
+  imageAlt="Visuel provisoire : mandala en pointillé beige sur fond noir."
+  related={{ label: 'Tatouage à Thiers', path: '/tatouage-thiers' }}
+/>

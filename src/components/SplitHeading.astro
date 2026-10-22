@@ -1,7 +1,7 @@
 ---
 /**
- * Titre éditorial découpé en lignes (choisies à la main) pour la révélation.
- * Le texte reste un titre HTML continu pour les lecteurs d'écran.
+ * Titre éditorial animé lettre par lettre. Les lignes sont choisies à la main ;
+ * le texte complet reste lisible d'un seul tenant pour les lecteurs d'écran.
  */
 interface Props {
   as?: 'h1' | 'h2' | 'h3' | 'p';
@@ -12,16 +12,30 @@ interface Props {
 }
 
 const { as: Tag = 'h2', lines, class: className, id, delay = 0 } = Astro.props;
+let index = 0;
+const model = lines.map((line) => line.split(' ').map((word) => [...word].map((ch) => ({ ch, i: index++ }))));
 ---
 
-<Tag class:list={['split', className]} id={id} data-reveal="lines" style={`--delay:${delay}s`}>
-  {
-    lines.map((line, i) => (
-      <span class="split-line">
-        <span class="split-inner" style={`--li:${i}`}>
-          {line}
+<Tag class:list={['split', className]} id={id} data-reveal="chars" style={`--delay:${delay}s`}>
+  <span class="sr-only">{lines.join(' ')}</span>
+  <span aria-hidden="true">
+    {
+      model.map((words, li) => (
+        <span class="split-line" style={`--li:${li}`}>
+          {words.map((chars, wi) => (
+            <Fragment>
+              {wi > 0 && ' '}
+              <span class="split-word">
+                {chars.map(({ ch, i }) => (
+                  <span class="split-char" style={`--ci:${i}`}>
+                    {ch}
+                  </span>
+                ))}
+              </span>
+            </Fragment>
+          ))}
         </span>
-      </span>
-    ))
-  }
+      ))
+    }
+  </span>
 </Tag>

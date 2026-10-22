@@ -50,7 +50,9 @@ que ce choix lui convient.
 |---|---|---|
 | Prestations | Tatouage, piercing (oreille, nez, corps) | Confirmer la liste (`src/data/services.ts`). |
 | Détatouage | Listé seulement par Fresha, non affiché | Confirmer ou écarter. |
-| Horaires | Non affichés (Fresha et grandbio.fr divergent) | Renseigner `site.hours` dans `src/config/site.ts`. |
+| Horaires | Affichés comme indicatifs : mardi–samedi 9 h–12 h et 14 h–18 h, fermé dimanche et lundi (fiche Fresha, seule source détaillée ; Bottin et grandbio n'en donnent pas) | Confirmer ou corriger `site.hours` et `site.openingHours` dans `src/config/site.ts` (aussi utilisés par les données structurées). |
+| Zone desservie | Thiers, Courpière, Lezoux, Puy-Guillaume, Peschadoires, Vichy, Clermont-Ferrand | Valider `site.areaServed` (référencement local). |
+| Pages de prestation | `/tatouage-thiers`, `/piercing-thiers` : déroulé d'une demande et conseils génériques | Relire et valider le texte (`src/pages/*-thiers.astro`). |
 | Accès PMR, stationnement | Mentionnés par la bio Instagram, non affichés | Confirmer avant d'ajouter. |
 | Textes de présentation | Rédigés à partir des sources publiques | Valider : `Hero.astro`, `Atelier.astro`, `Artist.astro`, `Booking.astro`, `services.ts`, réponses publiées de `faq.ts` (notamment « le salon vous répond pour convenir d'un rendez-vous »). |
 | Réponses de FAQ en brouillon | Acompte, tarifs, mineurs, soins, paiement | Rédiger les réponses dans `src/data/faq.ts` puis retirer `draft: true`. Les brouillons ne s'affichent qu'en développement. |
@@ -70,7 +72,13 @@ Aucune image d'un autre salon n'est utilisée.
 - L'image Open Graph (`public/og-thiersink.jpg`) et le visuel du hero sont des
   créations graphiques : ils peuvent rester.
 
-## 6. Avis clients
+## 6. Carte
+
+La carte des infos pratiques est générée à partir des données OpenStreetMap (extraction du
+22/10/2026, licence ODbL) : l'attribution « © contributeurs OpenStreetMap » doit rester
+visible.
+
+## 7. Avis clients
 
 Aucun avis n'est reproduit. Huit avis sont visibles sur l'annuaire grandbio.fr
 (probablement repris de Google) : ils ne sont pas utilisés, car leur texte exact n'a
@@ -78,7 +86,7 @@ pas pu être vérifié à la source. Pour en afficher, copier le texte intégral
 Google ou Facebook, avec l'accord de l'auteur, dans `src/data/reviews.ts`. Aucune note
 moyenne ne doit être ajoutée aux données structurées.
 
-## 7. Mise en ligne
+## 8. Mise en ligne
 
 - `SITE_URL` : domaine définitif (canonique, Open Graph, sitemap).
 - Configuration SMTP : sans elle, le formulaire répond honnêtement que l'envoi est
@@ -86,3 +94,5 @@ moyenne ne doit être ajoutée aux données structurées.
 - `PUBLIC_GA_MEASUREMENT_ID` : seulement si la mesure d'audience est souhaitée.
 - HTTPS : à activer chez l'hébergeur, puis `FORCE_HTTPS=true`.
 - Faire relire les pages légales : leur présence ne garantit pas la conformité.
+- Créer ou vérifier la fiche Google Business Profile (nom, adresse, téléphone, horaires
+  identiques au site) : c'est le premier levier du référencement local.

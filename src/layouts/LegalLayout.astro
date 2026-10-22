@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import { withBase } from '../config/site';
+import { breadcrumbJsonLd } from '../lib/seo';
 
 interface Props {
   title: string;
@@ -10,9 +11,11 @@ interface Props {
 }
 
 const { title, description, heading, updated } = Astro.props;
+const path = Astro.url.pathname.replace(withBase(''), '').replace(/\.html$/, '') || '/';
+const jsonLd = [breadcrumbJsonLd([{ name: 'Accueil', path: '/' }, { name: heading, path }], Astro.site)];
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
   <article class="legal" data-surface="light">
     <header class="legal__head container" id="top">
       <p class="t-caption legal__crumb"><a class="link link--quiet" href={withBase('/')}>Accueil</a> / {heading}</p>

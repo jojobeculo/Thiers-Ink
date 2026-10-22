@@ -1,5 +1,7 @@
 ---
 import ExternalIcon from './ExternalIcon.astro';
+import BookingButton from './BookingButton.astro';
+import CallButton from './CallButton.astro';
 import { site, mapLinks, withBase } from '../config/site';
 
 const year = new Date().getFullYear();
@@ -7,14 +9,33 @@ const year = new Date().getFullYear();
 
 <footer class="footer grain" data-surface="dark">
   <div class="container">
+    <div class="footer__cta">
+      <p class="footer__cta-title">Un projet de tatouage ou de piercing à {site.address.city} ?</p>
+      <div class="footer__cta-actions">
+        <BookingButton />
+        <CallButton />
+      </div>
+    </div>
+
     <div class="footer__grid">
       <div class="footer__col">
-        <p class="t-caption footer__label">Adresse</p>
+        <p class="t-caption footer__label">Salon</p>
         <address>
+          {site.name}<br />
           {site.address.street}<br />
-          {site.address.postalCode} {site.address.city}<br />
-          {site.address.region}
+          {site.address.postalCode} {site.address.city}, {site.address.region}
         </address>
+        {
+          site.hours.length > 0 && (
+            <ul class="footer__hours" role="list">
+              {site.hours.map((h) => (
+                <li>
+                  <span>{h.days}</span> <span>{h.hours}</span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
         <a class="link t-caption" href={mapLinks.google} target="_blank" rel="noopener noreferrer">
           Itinéraire<span class="sr-only"> (Google Maps, nouvel onglet)</span>
           <ExternalIcon />
@@ -24,9 +45,6 @@ const year = new Date().getFullYear();
         <p class="t-caption footer__label">Contact</p>
         <a class="link link--quiet" href={site.phone.href}>{site.phone.display}</a>
         <a class="link link--quiet footer__mail" href={`mailto:${site.email}`}>{site.email}</a>
-      </div>
-      <div class="footer__col">
-        <p class="t-caption footer__label">Réseaux</p>
         <a class="link link--quiet" href={site.social.instagram.url} target="_blank" rel="noopener noreferrer">
           Instagram<span class="sr-only"> (nouvel onglet)</span><ExternalIcon />
         </a>
@@ -34,20 +52,32 @@ const year = new Date().getFullYear();
           Facebook<span class="sr-only"> (nouvel onglet)</span><ExternalIcon />
         </a>
       </div>
+      <nav class="footer__col" aria-label="Prestations">
+        <p class="t-caption footer__label">Prestations</p>
+        <a class="link link--quiet" href={withBase('/tatouage-thiers')}>Tatouage à Thiers</a>
+        <a class="link link--quiet" href={withBase('/piercing-thiers')}>Piercing à Thiers</a>
+        <a class="link link--quiet" href={withBase('/#portfolio')}>Portfolio</a>
+        <a class="link link--quiet" href={withBase('/#faq')}>Questions fréquentes</a>
+        <a class="link link--quiet" href={withBase('/#rendez-vous')}>Demande de rendez-vous</a>
+      </nav>
       <nav class="footer__col" aria-label="Informations légales">
         <p class="t-caption footer__label">Informations</p>
         <a class="link link--quiet" href={withBase('/mentions-legales')}>Mentions légales</a>
         <a class="link link--quiet" href={withBase('/confidentialite')}>Confidentialité</a>
         <a class="link link--quiet" href={withBase('/cgu')}>Conditions d'utilisation</a>
         <button class="link link--quiet footer__btn" type="button" data-consent-open>Préférences cookies</button>
-        <button class="link link--quiet footer__btn" type="button" data-motion-toggle aria-pressed="false">
+        <button class="link link--quiet footer__btn" type="button" data-motion-toggle>
           <span data-motion-label>Réduire les animations</span>
         </button>
       </nav>
     </div>
 
     <div class="footer__mark" aria-hidden="true">
-      <p class="footer__wordmark">{site.name}</p>
+      <p class="footer__wordmark" data-reveal="chars">
+        <span class="split-line">
+          {site.name.split('').map((ch, i) => <span class="split-char" style={`--ci:${i}`}>{ch}</span>)}
+        </span>
+      </p>
     </div>
 
     <div class="footer__bottom t-caption">
@@ -66,6 +96,42 @@ const year = new Date().getFullYear();
     padding-bottom: 24px;
     border-top: 1px solid var(--color-graphite);
     overflow: hidden;
+  }
+
+  .footer__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px 40px;
+    padding-bottom: clamp(40px, 5vw, 64px);
+    margin-bottom: clamp(40px, 5vw, 64px);
+    border-bottom: 1px solid var(--color-graphite);
+  }
+
+  .footer__cta-title {
+    font-family: var(--font-serif);
+    font-weight: var(--font-weight-light);
+    font-size: var(--fs-subheading);
+    line-height: 1;
+    letter-spacing: var(--tracking-heading-em);
+    text-transform: uppercase;
+    max-width: 22ch;
+  }
+
+  .footer__cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer__hours {
+    display: grid;
+    gap: 2px;
+    margin: 6px 0 4px;
+    padding: 0;
+    color: var(--fg-muted);
+    font-size: var(--fs-small);
   }
 
   .footer__grid {
@@ -118,6 +184,10 @@ const year = new Date().getFullYear();
     color: var(--color-parchment);
     white-space: nowrap;
     text-align: center;
+  }
+
+  .footer__wordmark .split-line {
+    padding-top: 0.06em;
   }
 
   .footer__bottom {

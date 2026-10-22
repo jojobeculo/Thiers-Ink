@@ -3,16 +3,18 @@ import { bookingHref, isExternalBooking } from '../config/site';
 
 interface Props {
   class?: string;
-  size?: 'md' | 'sm';
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'solid' | 'outline';
 }
 
-const { class: className, size = 'md' } = Astro.props;
+const { class: className, size = 'md', variant = 'solid' } = Astro.props;
 ---
 
 <a
-  class:list={['btn', 'btn--cta', size === 'sm' && 'btn--sm', className]}
+  class:list={['btn', 'btn--cta', variant === 'solid' && 'btn--solid', size === 'sm' && 'btn--sm', size === 'lg' && 'btn--lg', className]}
   href={bookingHref}
   data-cursor="link"
+  data-magnetic
   {...isExternalBooking ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
 >
   <span class="btn__dot" aria-hidden="true"></span>

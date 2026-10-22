@@ -3,6 +3,7 @@ import { Font } from 'astro:assets';
 import '../styles/global.css';
 import { site, withBase } from '../config/site';
 import { MOTION_TIER_SCRIPT } from '../scripts/motion-tier.inline.mjs';
+import { businessJsonLd, websiteJsonLd } from '../lib/seo';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import ConsentBanner from '../components/ConsentBanner.astro';
@@ -13,11 +14,14 @@ interface Props {
   description?: string;
   /** Pages à ne pas indexer (confirmation d'envoi, 404). */
   noindex?: boolean;
-  /** Données structurées Schema.org propres à la page. */
-  jsonLd?: Record<string, unknown>;
+  /** Données structurées Schema.org propres à la page (ajoutées au salon et au site). */
+  jsonLd?: Record<string, unknown>[];
 }
 
-const { title, description = site.description, noindex = false, jsonLd } = Astro.props;
+const { title, description = site.description, noindex = false, jsonLd = [] } = Astro.props;
+const structuredData = noindex
+  ? undefined
+  : { '@context': 'https://schema.org', '@graph': [businessJsonLd(Astro.site), websiteJsonLd(Astro.site), ...jsonLd] };
 
 // Sans domaine définitif (SITE_URL), aucune URL absolue n'est inventée.
 // Au build (format « file »), les chemins finissent par .html : on publie l'URL propre.
@@ -33,11 +37,15 @@ const ogImage = Astro.site ? new URL(withBase('/og-thiersink.jpg'), Astro.site).
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
     {canonical && <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content="#100f0e" />
     <meta name="color-scheme" content="dark" />
     <meta name="format-detection" content="telephone=no" />
+    <meta name="geo.region" content="FR-63" />
+    <meta name="geo.placename" content={site.address.city} />
+    <meta name="geo.position" content={`${site.address.geo.lat};${site.address.geo.lng}`} />
+    <meta name="ICBM" content={`${site.address.geo.lat}, ${site.address.geo.lng}`} />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
@@ -62,10 +70,11 @@ const ogImage = Astro.site ? new URL(withBase('/og-thiersink.jpg'), Astro.site).
     <!-- Niveau de mouvement décidé avant le premier rendu (voir motion-tier.inline.mjs). -->
     <script is:inline set:html={MOTION_TIER_SCRIPT} />
 
-    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    {structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
   </head>
   <body>
     <a class="skip-link" href="#contenu">Aller au contenu</a>
+    <div class="progress" data-progress aria-hidden="true"></div>
     <ConsentBanner />
     <SiteHeader />
     <main id="contenu" tabindex="-1">

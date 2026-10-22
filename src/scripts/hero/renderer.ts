@@ -30,6 +30,12 @@ export function createInkRenderer(canvas: HTMLCanvasElement): InkRenderer {
     powerPreference: 'default',
   });
   if (!gl) return noop;
+  // Rendu logiciel (sans carte graphique) : la scène bloquerait le navigateur,
+  // l'image fixe reste affichée. Information lue localement, jamais transmise.
+  if (isSoftwareRenderer(gl)) {
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return noop;
+  }
 
   const program = buildProgram(gl);
   if (!program) return noop;
@@ -51,7 +57,13 @@ export function createInkRenderer(canvas: HTMLCanvasElement): InkRenderer {
     steps: gl.getUniformLocation(program, 'u_steps'),
   };
 
-  let scale = 0.8;
+  // Budget de pixels : la résolution de départ dépend de la taille de l'écran, puis
+  // la qualité s'ajuste aux performances mesurées image par image.
+  const PIXEL_BUDGET = 1_200_000;
+  const dpr0 = Math.min(window.devicePixelRatio || 1, 1.5);
+  const area = Math.max(1, canvas.clientWidth * canvas.clientHeight * dpr0 * dpr0);
+  let scale = Math.min(0.8, Math.sqrt(PIXEL_BUDGET / area));
+  const minScale = scale * 0.56;
   let steps = 72;
   let raf = 0;
   let running = false;
@@ -84,8 +96,8 @@ export function createInkRenderer(canvas: HTMLCanvasElement): InkRenderer {
     else slowFrames = Math.max(0, slowFrames - 1);
     if (slowFrames < 24) return;
     slowFrames = 0;
-    if (scale > 0.46) {
-      scale = Math.max(0.45, scale * 0.82);
+    if (scale > minScale * 1.01) {
+      scale = Math.max(minScale, scale * 0.82);
       steps = Math.max(40, steps - 12);
       resize();
     } else {
@@ -170,6 +182,12 @@ export function createInkRenderer(canvas: HTMLCanvasElement): InkRenderer {
   startTime = performance.now();
   play();
   return { destroy };
+}
+
+function isSoftwareRenderer(gl: WebGLRenderingContext): boolean {
+  const info = gl.getExtension('WEBGL_debug_renderer_info');
+  const renderer = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER) ?? '');
+  return /swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer);
 }
 
 function buildProgram(gl: WebGLRenderingContext): WebGLProgram | null {

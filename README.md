@@ -80,26 +80,34 @@ premier rendu**, sans rien collecter :
 
 | Niveau | Quand | Effets |
 |---|---|---|
-| `full` | Ordinateur, souris, plus de 4 cœurs ou 4 Go | WebGL, parallaxe, plans au défilement, inclinaison 3D, curseur, aperçu flottant des prestations. |
-| `lite` | Tactile, écran ≤ 820 px, appareil moyen | Révélations et transitions CSS, bandeau animé, sans WebGL ni parallaxe. |
-| `reduced` | `prefers-reduced-motion`, économie de données, ≤ 2 cœurs ou 2 Go, choix du visiteur | Aucune animation ; images fixes ; tout le contenu est visible. |
+| `full` | Ordinateur avec souris | Goutte d'encre WebGL, parallaxe, plans au défilement, inclinaison 3D, curseur, boutons magnétiques, aperçu flottant des prestations, flou de mise au point. |
+| `lite` | Écran tactile ou ≤ 820 px, ≤ 2 cœurs ou 2 Go, économie de données | Titres lettre par lettre, révélations, zoom lent du hero, parallaxe CSS (navigateurs compatibles), bandeau, carte qui se trace — sans WebGL ni effets de souris. |
+| `reduced` | Réglage « réduire les animations » du système ou du visiteur, navigateur ancien | Fondus simples sans déplacement ; image fixe ; carte statique. |
 
-Après le chargement, une mesure d'une seconde (60 images, sans blocage) passe de `full`
-à `lite` si l'affichage est saccadé. Le bouton « Réduire les animations » du pied de page
-mémorise le choix du visiteur. Sans JavaScript, ou si le module ne démarre pas dans les
-4 secondes, tout le contenu reste visible.
+Après le chargement, une mesure d'une seconde est faite **avant** le démarrage de la 3D :
+si l'affichage est déjà saccadé, le site passe de `full` à `lite`. Ensuite, la scène WebGL
+ajuste seule sa résolution. Le bouton du pied de page « Réduire les animations » /
+« Activer les animations » mémorise le choix du visiteur et permet de réactiver les
+animations même si le système demande de les réduire. Sans JavaScript, ou si le module ne
+démarre pas dans les 6 secondes, tout le contenu reste visible.
+
+Autres effets : barre de progression de lecture (tous niveaux), mot-symbole du pied de page
+révélé lettre par lettre, reflet sur les boutons pleins, pulsation du repère sur la carte.
 
 **Hero WebGL** : une goutte d'encre noire brillante en raymarching (`ink.frag`),
 chargée après le premier rendu, au niveau `full` seulement. L'image fixe du hero est une
-capture de la même scène : elle sert d'image LCP et de repli. La résolution et le nombre
-de pas baissent si les images dépassent 22 ms ; au plancher, le rendu s'arrête. Aucune
+capture de la même scène : elle sert d'image LCP et de repli. La résolution de départ
+dépend de la taille de l'écran (budget de 1,2 million de pixels) ; elle baisse avec le
+nombre de pas si les images dépassent 22 ms ; au plancher, le rendu s'arrête. Aucune
 image n'est calculée quand le hero est recouvert ou l'onglet inactif. Le contexte WebGL
 est libéré à la destruction.
 
 ## Formulaire de rendez-vous
 
-Le CTA unique « Prendre rendez-vous » mène au formulaire (`#rendez-vous`), ou à Planity si
-`site.booking.planityUrl` est renseigné (aucun profil officiel trouvé à ce jour).
+L'action principale « Prendre rendez-vous » (bouton plein, présent dans le hero, l'en-tête,
+chaque section clé, le bandeau d'appel, le pied de page et le bouton flottant mobile) mène
+au formulaire (`#rendez-vous`), ou à Planity si `site.booking.planityUrl` est renseigné
+(aucun profil officiel trouvé à ce jour). « Appeler le salon » est l'action secondaire.
 
 - Validation identique côté navigateur et serveur (`src/lib/booking/validate.ts`).
 - Anti-spam : champ piège, délai minimal de remplissage, 5 envois par IP et par
@@ -117,15 +125,32 @@ GA4 n'est chargé qu'après acceptation explicite. « Tout refuser » et « Tout
 ont le même poids ; « Personnaliser » détaille le choix. Le choix est gardé 6 mois, les
 cookies GA expirent après 13 mois, les signaux Google et la publicité personnalisée sont
 désactivés. Le refus après acceptation supprime les cookies `_ga`. Sans identifiant GA4,
-aucun bandeau ne s'affiche et « Préférences cookies » l'indique. La carte OpenStreetMap
-n'est chargée qu'au clic.
+aucun bandeau ne s'affiche et « Préférences cookies » l'indique.
+
+## Carte
+
+La carte des infos pratiques (`public/carte/thiers-docteurs-dumas.svg`) est un dessin
+vectoriel aux couleurs du site, généré à partir des données OpenStreetMap (ODbL,
+attribution affichée). Elle est servie par le site : aucune requête vers un service tiers,
+donc aucun consentement requis. Au niveau `full`/`lite`, elle est intégrée au document à
+l'approche de l'écran et ses rues se tracent ; sinon l'image reste statique.
 
 ## SEO
 
-Titre et description par page, `lang="fr"`, un seul `h1` par page, Open Graph et image de
-partage, favicon, page 404, `robots.txt`, données structurées `TattooParlor` limitées aux
-informations vérifiées (ni horaires ni note). L'URL canonique, les URL absolues
-Open Graph et le sitemap n'existent qu'avec `SITE_URL` : aucun domaine n'est inventé.
+Référencement local « tatouage / piercing à Thiers » :
+
+- titres et descriptions orientés recherche locale sur chaque page ;
+- pages dédiées **/tatouage-thiers** et **/piercing-thiers** (contenu propre, fil d'Ariane,
+  FAQ, liens internes depuis l'accueil, le menu et le pied de page) ;
+- données structurées (`src/lib/seo.ts`) : `TattooParlor` (adresse, coordonnées, horaires,
+  zone desservie, prestations, carte, fondateur), `WebSite`, `Service`, `BreadcrumbList`,
+  `FAQPage` — aucune note ni aucun avis inventé ;
+- balises `geo.*`, `robots` avec `max-image-preview:large`, Open Graph, `lang="fr"`, un seul
+  `h1` par page, sitemap avec date de mise à jour, `robots.txt`, page 404 ;
+- l'URL canonique, les URL absolues et le sitemap n'existent qu'avec `SITE_URL`.
+
+Le premier levier local reste la **fiche Google Business Profile** du salon : nom,
+adresse et téléphone doivent y être identiques à ceux du site.
 
 ## Sécurité
 

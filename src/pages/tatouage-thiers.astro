@@ -1,0 +1,51 @@
+---
+import ServiceLayout from '../layouts/ServiceLayout.astro';
+import encre01 from '../assets/images/etudes/encre-01.jpg';
+import { site } from '../config/site';
+---
+
+<ServiceLayout
+  path="/tatouage-thiers"
+  name="Tatouage"
+  title={`Tatouage à Thiers (63) — salon ${site.name}, rue des Docteurs-Dumas`}
+  description={`Salon de tatouage à Thiers (Puy-de-Dôme) : ${site.name}, 43 rue des Docteurs-Dumas. Décrivez votre projet (motif, emplacement, taille, style) et prenez rendez-vous en ligne ou au ${site.phone.display}.`}
+  heading={['Tatouage', 'à Thiers']}
+  lead={`${site.name} est un salon de tatouage situé au ${site.address.street}, à ${site.address.city} (Puy-de-Dôme). Chaque projet se prépare à partir de votre demande : le motif, son emplacement, la taille envisagée et le style recherché.`}
+  items={['Projet personnel', 'Motif', 'Emplacement', 'Taille', 'Style']}
+  steps={[
+    {
+      title: 'Décrivez votre projet',
+      text: 'Avec le formulaire de rendez-vous ou par téléphone : le motif, l’emplacement sur le corps, la taille approximative et le style souhaité.',
+    },
+    {
+      title: 'Joignez une image de référence',
+      text: 'Facultatif : une image JPG, PNG, WebP ou HEIC de 5 Mo au maximum, pour illustrer votre idée.',
+    },
+    {
+      title: 'Convenez d’un rendez-vous',
+      text: 'Le salon vous répond par e-mail ou par téléphone pour échanger sur le projet et fixer une date.',
+    },
+  ]}
+  tips={[
+    {
+      title: 'Rassemblez vos références',
+      text: 'Photos, dessins, captures : quelques images suffisent pour montrer l’esprit du motif que vous imaginez.',
+    },
+    {
+      title: 'Pensez à l’emplacement',
+      text: 'La zone du corps influence la taille et la lisibilité du motif. Indiquez-la dès votre demande.',
+    },
+    {
+      title: 'Estimez la taille',
+      text: 'Une dimension approximative en centimètres aide à préparer l’échange avec le salon.',
+    },
+    {
+      title: 'Précisez vos contraintes',
+      text: 'Une date importante, une première fois, une question particulière : notez-le dans votre message.',
+    },
+  ]}
+  faqIds={['rendez-vous', 'preparer', 'reference', 'adresse', 'realisations']}
+  image={encre01}
+  imageAlt="Visuel provisoire : volutes d'encre claire sur fond noir."
+  related={{ label: 'Piercing à Thiers', path: '/piercing-thiers' }}
+/>

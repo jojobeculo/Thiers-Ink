@@ -13,7 +13,7 @@ export const site = {
   activity: 'Tatouage & piercing',
   locale: 'fr_FR',
   description:
-    'THIERSINK, atelier de tatouage et de piercing au 43 rue des Docteurs-Dumas à Thiers (Puy-de-Dôme). Demande de rendez-vous en ligne ou par téléphone.',
+    'Salon de tatouage et de piercing à Thiers (Puy-de-Dôme), 43 rue des Docteurs-Dumas. Tatouage, piercing oreille, nez et corps. Rendez-vous en ligne ou au 06 12 80 09 89.',
 
   /** Responsable : Anthony Degoul (registre national des entreprises, entreprise individuelle). */
   owner: {
@@ -58,11 +58,22 @@ export const site = {
   },
 
   /**
-   * Horaires : non publiés tant qu'ils ne sont pas confirmés (Fresha et
-   * grandbio.fr donnent des horaires différents). Format attendu :
-   * [{ days: 'Mardi – samedi', hours: '9 h – 12 h · 14 h – 18 h' }]
+   * Horaires relevés le 22/10/2026 sur la fiche publique Fresha du salon (seule
+   * source détaillant chaque jour). Affichés comme indicatifs : à confirmer par le
+   * propriétaire (docs/A-CONFIRMER.md).
    */
-  hours: [] as { days: string; hours: string }[],
+  hours: [
+    { days: 'Mardi – samedi', hours: '9 h – 12 h · 14 h – 18 h' },
+    { days: 'Dimanche, lundi', hours: 'Fermé' },
+  ] as { days: string; hours: string }[],
+  /** Mêmes horaires au format Schema.org (données structurées). */
+  openingHours: [
+    { days: ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '09:00', closes: '12:00' },
+    { days: ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '14:00', closes: '18:00' },
+  ],
+
+  /** Communes proches, pour le référencement local (zone desservie). */
+  areaServed: ['Thiers', 'Puy-de-Dôme', 'Courpière', 'Lezoux', 'Puy-Guillaume', 'Peschadoires', 'Vichy', 'Clermont-Ferrand'],
 } as const;
 
 /**

@@ -329,6 +329,47 @@ a {
   pointer-events: none;
 }
 
+/* Bouton plein : action principale, la plus visible de la page ------------ */
+.btn--solid {
+  --btn-fg: var(--bg);
+  --btn-fill: var(--accent);
+  --btn-fg-hover: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+.btn--solid:hover,
+.btn--solid:focus-visible {
+  border-color: var(--accent);
+}
+
+.btn--solid:hover .btn__dot,
+.btn--solid:focus-visible .btn__dot {
+  background: var(--bg);
+}
+
+/* reflet qui traverse le bouton au survol */
+.btn--solid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.28) 50%, transparent 65%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+
+html.js:not([data-motion='reduced']) .btn--solid:hover::after {
+  transform: translateX(120%);
+  transition: transform 0.9s var(--ease-editorial);
+}
+
+.btn--lg {
+  min-height: 60px;
+  padding: 22px 34px;
+  font-size: 15px;
+}
+
 /* Lien texte (soulignement animé) ------------------------------------------ */
 .link {
   position: relative;
@@ -434,26 +475,42 @@ a {
    Mouvement
    Les états cachés ne s'appliquent que lorsque le script d'en-tête a posé
    html.js[data-motion] : sans JavaScript, tout reste visible.
+   full : tous les effets ; lite : sans 3D ni effets liés à la souris ;
+   reduced : fondus simples, sans déplacement (préférence « réduire les animations »).
    ========================================================================== */
-html.js[data-motion='full'] [data-reveal],
-html.js[data-motion='lite'] [data-reveal] {
-  --reveal-y: 28px;
+html.js[data-motion] [data-reveal] {
+  --reveal-y: 34px;
   transition:
     opacity var(--dur-reveal) var(--ease-out-expo),
     transform var(--dur-reveal) var(--ease-out-expo),
-    clip-path var(--dur-slow) var(--ease-out-expo);
+    filter var(--dur-reveal) var(--ease-out-expo);
   transition-delay: calc(var(--i, 0) * var(--stagger) + var(--delay, 0s));
 }
 
 html.js[data-motion='lite'] [data-reveal] {
-  --reveal-y: 16px;
+  --reveal-y: 20px;
 }
 
-/* fondu + translation */
+/* niveau réduit : simple fondu, aucun déplacement */
+html.js[data-motion='reduced'] [data-reveal] {
+  --reveal-y: 0px;
+  transition: opacity 0.7s var(--ease-editorial);
+  transition-delay: calc(var(--i, 0) * 0.05s);
+}
+
+html.js[data-motion='reduced'] [data-reveal]:not([data-reveal='mask']):not(.is-in) {
+  opacity: 0;
+}
+
+/* fondu + translation, avec une mise au point (flou) sur ordinateur */
 html.js[data-motion='full'] [data-reveal='fade']:not(.is-in),
 html.js[data-motion='lite'] [data-reveal='fade']:not(.is-in) {
   opacity: 0;
   transform: translate3d(0, var(--reveal-y), 0);
+}
+
+html.js[data-motion='full'] [data-reveal='fade']:not(.is-in) {
+  filter: blur(8px);
 }
 
 /* masque d'image (rideau vertical). Le masque porte sur les enfants : un
@@ -470,21 +527,59 @@ html.js[data-motion='lite'] [data-reveal='mask']:not(.is-in) > * {
   clip-path: inset(100% 0 0 0);
 }
 
-html.js[data-motion='full'] [data-reveal='mask'] img {
+html.js[data-motion='reduced'] [data-reveal='mask'] > * {
+  transition: opacity 0.8s var(--ease-editorial);
+}
+
+html.js[data-motion='reduced'] [data-reveal='mask']:not(.is-in) > * {
+  opacity: 0;
+}
+
+html.js[data-motion='full'] [data-reveal='mask'] img,
+html.js[data-motion='lite'] [data-reveal='mask'] img {
   transition: transform calc(var(--dur-slow) * 1.4) var(--ease-out-expo);
   transition-delay: inherit;
 }
 
-html.js[data-motion='full'] [data-reveal='mask']:not(.is-in) img {
+html.js[data-motion='full'] [data-reveal='mask']:not(.is-in) img,
+html.js[data-motion='lite'] [data-reveal='mask']:not(.is-in) img {
   transform: scale(1.18);
 }
 
-/* lignes et mots (titres) : chaque fragment glisse hors de son masque */
+/* titres : lignes masquées, mots insécables, lettres qui montent une à une */
 .split-line {
   display: block;
   overflow: hidden;
   padding-bottom: 0.08em;
   margin-bottom: -0.08em;
+}
+
+.split-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.split-char {
+  display: inline-block;
+  transform-origin: 0 100%;
+}
+
+html.js[data-motion='full'] [data-reveal='chars'] .split-char,
+html.js[data-motion='lite'] [data-reveal='chars'] .split-char {
+  transition:
+    transform 1.15s var(--ease-out-expo),
+    opacity 0.9s var(--ease-out-expo);
+  transition-delay: calc(var(--li, 0) * 0.12s + var(--ci, 0) * 0.022s + var(--delay, 0s));
+}
+
+html.js[data-motion='full'] [data-reveal='chars']:not(.is-in) .split-char {
+  opacity: 0;
+  transform: translate3d(0, 108%, 0) rotate(8deg);
+}
+
+html.js[data-motion='lite'] [data-reveal='chars']:not(.is-in) .split-char {
+  opacity: 0;
+  transform: translate3d(0, 108%, 0);
 }
 
 html.js[data-motion='full'] [data-reveal='lines'] .split-inner,
@@ -511,21 +606,79 @@ html.js[data-motion='lite'] [data-reveal='rule']:not(.is-in) {
   transform: scaleX(0);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+/* Filet de sécurité : module d'animation absent après 6 s, tout s'affiche. */
+html[data-reveal-fallback] [data-reveal],
+html[data-reveal-fallback] [data-reveal] > *,
+html[data-reveal-fallback] .split-char,
+html[data-reveal-fallback] .split-inner {
+  opacity: 1 !important;
+  transform: none !important;
+  clip-path: none !important;
+  filter: none !important;
+}
+
+/* Plans : le fond des sections claires s'élargit à leur entrée (niveau full) */
+[data-surface][data-plane] {
+  background: transparent;
+  isolation: isolate;
+}
+
+[data-plane]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg);
+  transform: scaleX(calc(0.9 + var(--plane, 1) * 0.1));
+}
+
+/* Parallaxe d'image pilotée par le défilement, sans JavaScript (niveau lite,
+   navigateurs compatibles) ; le niveau full utilise la version JavaScript. */
+@supports (animation-timeline: view()) {
+  html.js[data-motion='lite'] .mframe__inner {
+    animation: drift-y linear both;
+    animation-timeline: view();
+    animation-range: cover;
   }
 }
 
-html[data-motion='reduced'] *,
-html[data-motion='reduced'] *::before,
-html[data-motion='reduced'] *::after {
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
+@keyframes drift-y {
+  from {
+    transform: translate3d(0, -5%, 0) scale(1.12);
+  }
+  to {
+    transform: translate3d(0, 5%, 0) scale(1.12);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Barre de progression de lecture */
+.progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: calc(var(--z-header) + 1);
+  height: 2px;
+  background: var(--color-saffron-glow);
+  transform: scaleX(var(--progress, 0));
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+/* Bouton magnétique (niveau full) */
+html[data-motion='full'] [data-magnetic] {
+  transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
+  transition:
+    transform 0.6s var(--ease-out-expo),
+    color var(--dur-base) var(--ease-editorial);
+}
+
+html.js[data-motion='full'] [data-magnetic]:hover {
+  transition:
+    transform 0.25s var(--ease-out-expo),
+    color var(--dur-base) var(--ease-editorial);
 }

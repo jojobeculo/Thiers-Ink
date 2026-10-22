@@ -1,6 +1,7 @@
 ---
 import { getImage } from 'astro:assets';
 import BookingButton from './BookingButton.astro';
+import CallButton from './CallButton.astro';
 import { site } from '../config/site';
 import landscape from '../assets/images/hero/goutte-encre-paysage.jpg';
 import portrait from '../assets/images/hero/goutte-encre-portrait.jpg';
@@ -43,9 +44,12 @@ const letters = site.name.split('');
   <div class="hero__inner">
     <div class="hero__lead">
       <p class="hero__intro t-body-lg">
-        Atelier de tatouage et de piercing au {site.address.street}, à {site.address.city}.
+        Salon de tatouage et de piercing à {site.address.city} (Puy-de-Dôme), au {site.address.street}.
       </p>
-      <BookingButton class="hero__cta" />
+      <div class="hero__actions">
+        <BookingButton size="lg" class="hero__cta" />
+        <CallButton withNumber={false} class="hero__call" />
+      </div>
     </div>
 
     <div class="hero__bottom">
@@ -70,7 +74,7 @@ const letters = site.name.split('');
 </section>
 
 <script>
-  import { getTier } from '../scripts/motion';
+  import { getTier, probeDone } from '../scripts/motion';
 
   const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
   let renderer: { destroy: () => void } | null = null;
@@ -87,6 +91,9 @@ const letters = site.name.split('');
     if (renderer || loading || !canvas) return;
     loading = true;
     try {
+      // la sonde mesure la fluidité avant que la scène 3D ne charge le processeur graphique
+      await probeDone;
+      if (getTier() !== 'full') return;
       const { createInkRenderer } = await import('../scripts/hero/renderer');
       if (getTier() === 'full') renderer = createInkRenderer(canvas);
     } finally {
@@ -181,15 +188,46 @@ const letters = site.name.split('');
 
   .hero__lead {
     align-self: start;
-    max-width: 30rem;
+    max-width: 38rem;
     display: grid;
     gap: 28px;
     justify-items: start;
   }
 
   .hero__intro {
-    max-width: 24ch;
+    max-width: 26ch;
     color: var(--color-parchment);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero__actions :global(.btn--call) {
+    background: rgb(16 15 14 / 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  /* Image fixe vivante (mobile, ou avant que la scène 3D prenne le relais) */
+  :global(html.js[data-motion='full']) .hero__poster img,
+  :global(html.js[data-motion='lite']) .hero__poster img {
+    animation: hero-drift 24s var(--ease-in-out) infinite alternate;
+  }
+
+  .hero__media:has(.hero__canvas[data-ready]) .hero__poster img {
+    animation: none;
+  }
+
+  @keyframes hero-drift {
+    from {
+      transform: scale(1.02);
+    }
+    to {
+      transform: scale(1.12) translate3d(-1.5%, 1.2%, 0);
+    }
   }
 
   .hero__bottom {
@@ -292,6 +330,17 @@ const letters = site.name.split('');
 
   :global(html.js[data-motion='full']) .hero__scroll-line::after {
     animation: scroll-cue 2.6s var(--ease-in-out) 1.6s infinite;
+  }
+
+  /* Niveau réduit : apparitions en fondu, sans déplacement */
+  :global(html.js[data-motion='reduced']) .hero__char {
+    animation: fade-in 0.9s var(--ease-editorial) both;
+    animation-delay: calc(var(--ci) * 0.05s);
+  }
+
+  :global(html.js[data-motion='reduced']) .hero__meta,
+  :global(html.js[data-motion='reduced']) .hero__lead > * {
+    animation: fade-in 0.9s var(--ease-editorial) 0.3s both;
   }
 
   @keyframes char-in {
