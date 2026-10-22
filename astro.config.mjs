@@ -8,14 +8,17 @@ import { MOTION_TIER_SCRIPT } from './src/scripts/motion-tier.inline.mjs';
 // Domaine définitif du site (ex. https://www.thiersink.fr), lu au moment du build.
 // Tant qu'il n'est pas renseigné : pas d'URL canonique, pas d'URL absolue Open Graph
 // et pas de sitemap. Voir docs/A-CONFIRMER.md.
-const site = 'https://jojobeculo.github.io';
+// L'aperçu GitHub Pages reçoit SITE_URL et BASE_PATH (/Thiers-Ink) de
+// .github/workflows/astro.yml.
+const site = process.env.SITE_URL?.replace(/\/$/, '') || undefined;
+const base = process.env.BASE_PATH || undefined;
 
 /** @type {`sha256-${string}`} */
 const motionTierHash = `sha256-${createHash('sha256').update(MOTION_TIER_SCRIPT).digest('base64')}`;
 
 export default defineConfig({
   site,
-  base: '/Thiers-Ink',
+  base,
   output: 'static',
   adapter: node({ mode: 'standalone' }),
   trailingSlash: 'never',
@@ -99,6 +102,8 @@ export default defineConfig({
   ],
   env: {
     schema: {
+      // Hébergement sans serveur (aperçu GitHub Pages) : le formulaire ne peut pas envoyer.
+      PUBLIC_STATIC_PREVIEW: envField.boolean({ context: 'client', access: 'public', default: false }),
       PUBLIC_GA_MEASUREMENT_ID: envField.string({
         context: 'client',
         access: 'public',

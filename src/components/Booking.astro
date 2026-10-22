@@ -1,8 +1,9 @@
 ---
 import SectionHeader from './SectionHeader.astro';
 import SplitHeading from './SplitHeading.astro';
-import { site, isExternalBooking, bookingHref } from '../config/site';
+import { site, isExternalBooking, bookingHref, withBase } from '../config/site';
 import { LIMITS, REQUEST_TYPES, SIZES, ACCEPTED_IMAGE_TYPES } from '../lib/booking/validate';
+import { PUBLIC_STATIC_PREVIEW } from 'astro:env/client';
 ---
 
 <section class="booking section grain" id="rendez-vous" data-surface="dark" aria-labelledby="rendez-vous-title">
@@ -43,11 +44,19 @@ import { LIMITS, REQUEST_TYPES, SIZES, ACCEPTED_IMAGE_TYPES } from '../lib/booki
     <form
       class="form"
       method="post"
-      action="/api/rendez-vous"
+      action={withBase('/api/rendez-vous')}
       enctype="multipart/form-data"
       data-booking-form
       aria-describedby="form-required"
     >
+      {
+        PUBLIC_STATIC_PREVIEW && (
+          <p class="form__preview" role="note">
+            Version de démonstration hébergée sans serveur : l'envoi en ligne n'est pas actif ici. Pour prendre
+            rendez-vous, appelez le salon au <a class="link" href={site.phone.href}>{site.phone.display}</a>.
+          </p>
+        )
+      }
       <p class="form__required t-caption" id="form-required">Les champs marqués d'un astérisque (*) sont obligatoires.</p>
 
       <div class="form__row">
@@ -174,7 +183,7 @@ import { LIMITS, REQUEST_TYPES, SIZES, ACCEPTED_IMAGE_TYPES } from '../lib/booki
 
       <p class="form__privacy t-caption">
         Les informations saisies servent uniquement à traiter votre demande. Elles sont transmises par e-mail au salon et ne
-        sont pas conservées sur le site. Détails dans la <a class="link" href="/confidentialite">politique de confidentialité</a>.
+        sont pas conservées sur le site. Détails dans la <a class="link" href={withBase('/confidentialite')}>politique de confidentialité</a>.
       </p>
 
       <div class="form__actions">
@@ -248,6 +257,13 @@ import { LIMITS, REQUEST_TYPES, SIZES, ACCEPTED_IMAGE_TYPES } from '../lib/booki
 
   .form__required {
     color: var(--fg-muted);
+  }
+
+  .form__preview {
+    padding: 16px 18px;
+    border: 1px solid var(--color-walnut);
+    border-left: 3px solid var(--accent);
+    font-size: var(--fs-small);
   }
 
   .form__row {

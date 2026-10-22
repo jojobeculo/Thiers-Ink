@@ -1,7 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import '../styles/global.css';
-import { site } from '../config/site';
+import { site, withBase } from '../config/site';
 import { MOTION_TIER_SCRIPT } from '../scripts/motion-tier.inline.mjs';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -21,9 +21,9 @@ const { title, description = site.description, noindex = false, jsonLd } = Astro
 
 // Sans domaine définitif (SITE_URL), aucune URL absolue n'est inventée.
 // Au build (format « file »), les chemins finissent par .html : on publie l'URL propre.
-const cleanPath = Astro.url.pathname.replace(/(?:\/index)?\.html$/, '') || '/';
+const cleanPath = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/') || '/';
 const canonical = Astro.site && !noindex ? new URL(cleanPath, Astro.site).href : undefined;
-const ogImage = Astro.site ? new URL('/og-thiersink.jpg', Astro.site).href : undefined;
+const ogImage = Astro.site ? new URL(withBase('/og-thiersink.jpg'), Astro.site).href : undefined;
 ---
 
 <!doctype html>
@@ -40,9 +40,9 @@ const ogImage = Astro.site ? new URL('/og-thiersink.jpg', Astro.site).href : und
     <meta name="format-detection" content="telephone=no" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={withBase('/favicon-32.png')} type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content={site.locale} />

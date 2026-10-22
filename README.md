@@ -144,6 +144,8 @@ Voir [`.env.example`](.env.example).
 | Variable | Moment | Rôle |
 |---|---|---|
 | `SITE_URL` | build | Domaine définitif (canonique, Open Graph, sitemap) et domaine de confiance pour `X-Forwarded-*`. |
+| `BASE_PATH` | build | Sous-chemin de déploiement (ex. `/Thiers-Ink` sur GitHub Pages). Vide à la racine. |
+| `PUBLIC_STATIC_PREVIEW` | build | `true` sur un hébergement sans serveur : avis sur le formulaire. |
 | `PUBLIC_GA_MEASUREMENT_ID` | build | Identifiant GA4 (`G-…`). Facultatif. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` | exécution | Serveur d'envoi des demandes. |
 | `BOOKING_TO`, `BOOKING_FROM` | exécution | Destinataire (défaut : e-mail du salon) et expéditeur. |
@@ -162,6 +164,15 @@ FORCE_HTTPS=true SMTP_HOST=… SMTP_USER=… SMTP_PASS=… npm start
 Derrière un proxy, `SITE_URL` est indispensable : Astro ne fait confiance aux en-têtes
 `X-Forwarded-*` que pour ce domaine. Sans lui, l'IP vue par le serveur est celle du proxy
 et la limite de 5 demandes par 15 minutes s'appliquerait à tous les visiteurs à la fois.
+
+### Aperçu GitHub Pages
+
+Le workflow `.github/workflows/astro.yml` publie un aperçu statique sur
+https://jojobeculo.github.io/Thiers-Ink/ à chaque push sur la branche. Il construit le
+site avec `SITE_URL`, `BASE_PATH=/Thiers-Ink` et `PUBLIC_STATIC_PREVIEW=true`, puis
+publie `dist/client/`. GitHub Pages n'exécute pas de serveur : le formulaire y affiche
+que l'envoi en ligne n'est pas actif et renvoie vers le téléphone. Tous les liens
+internes passent par `withBase()` (`src/config/site.ts`) pour suivre le sous-chemin.
 
 Un hébergement purement statique peut servir `dist/client/`, mais le formulaire et la
 page `/demande` ont besoin du serveur. Pour Netlify ou Vercel, remplacer l'adaptateur

@@ -11,7 +11,7 @@ import Instagram from '../components/Instagram.astro';
 import Practical from '../components/Practical.astro';
 import Faq from '../components/Faq.astro';
 import Booking from '../components/Booking.astro';
-import { site } from '../config/site';
+import { site, withBase } from '../config/site';
 
 // Données structurées : uniquement des informations publiques vérifiées.
 // Ni horaires ni note moyenne tant qu'elles ne sont pas confirmées.
@@ -38,7 +38,9 @@ const jsonLd = {
   },
   // Instagram n'est déclaré qu'une fois confirmé par le propriétaire.
   sameAs: [site.social.facebook, ...(site.social.instagram.confirmed ? [site.social.instagram.url] : [])],
-  ...(Astro.site ? { url: Astro.site.href, image: new URL('/og-thiersink.jpg', Astro.site).href } : {}),
+  ...(Astro.site
+    ? { url: new URL(withBase('/'), Astro.site).href, image: new URL(withBase('/og-thiersink.jpg'), Astro.site).href }
+    : {}),
 };
 ---
 

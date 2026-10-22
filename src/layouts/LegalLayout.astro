@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import { withBase } from '../config/site';
 
 interface Props {
   title: string;
@@ -14,7 +15,7 @@ const { title, description, heading, updated } = Astro.props;
 <BaseLayout title={title} description={description}>
   <article class="legal" data-surface="light">
     <header class="legal__head container" id="top">
-      <p class="t-caption legal__crumb"><a class="link link--quiet" href="/">Accueil</a> / {heading}</p>
+      <p class="t-caption legal__crumb"><a class="link link--quiet" href={withBase('/')}>Accueil</a> / {heading}</p>
       <h1 class="t-display legal__title">{heading}</h1>
       <p class="t-caption legal__updated">Dernière mise à jour : {updated}</p>
     </header>

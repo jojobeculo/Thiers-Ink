@@ -65,7 +65,13 @@ export const site = {
   hours: [] as { days: string; hours: string }[],
 } as const;
 
-export const bookingHref = site.booking.planityUrl ?? `/${site.booking.formAnchor}`;
+/**
+ * Préfixe un chemin interne du sous-chemin de déploiement (BASE_PATH), par exemple
+ * /Thiers-Ink pour l'aperçu GitHub Pages. Sans sous-chemin, le chemin reste inchangé.
+ */
+export const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, '')}${path}`;
+
+export const bookingHref = site.booking.planityUrl ?? withBase(`/${site.booking.formAnchor}`);
 export const isExternalBooking = site.booking.planityUrl !== null;
 
 export const mapLinks = {

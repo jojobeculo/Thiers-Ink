@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { site } from '../config/site';
+import { site, withBase } from '../config/site';
 ---
 
 <BaseLayout title={`Page introuvable — ${site.name}`} description="Cette page n'existe pas ou a été déplacée." noindex>
@@ -12,9 +12,9 @@ import { site } from '../config/site';
         <span class="t-heading-sm nf__text">Cette page n'existe pas ou a été déplacée.</span>
       </h1>
       <ul class="nf__links t-ui" role="list">
-        <li><a class="link" href="/">Retour à l'accueil</a></li>
-        <li><a class="link" href="/#portfolio">Portfolio</a></li>
-        <li><a class="link" href="/#rendez-vous">Prendre rendez-vous</a></li>
+        <li><a class="link" href={withBase('/')}>Retour à l'accueil</a></li>
+        <li><a class="link" href={withBase('/#portfolio')}>Portfolio</a></li>
+        <li><a class="link" href={withBase('/#rendez-vous')}>Prendre rendez-vous</a></li>
       </ul>
     </div>
     <svg class="nf__drop" viewBox="0 0 64 64" aria-hidden="true">

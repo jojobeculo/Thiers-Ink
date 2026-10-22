@@ -1,7 +1,7 @@
 ---
 import BookingButton from './BookingButton.astro';
 import ExternalIcon from './ExternalIcon.astro';
-import { site } from '../config/site';
+import { site, withBase } from '../config/site';
 
 const primary = [
   { id: 'atelier', label: "L'atelier" },
@@ -24,7 +24,7 @@ const full = [
 
 <header class="site-header" data-site-header data-tone="dark">
   <div class="site-header__inner">
-    <a class="brand" href="/" data-cursor="link">
+    <a class="brand" href={withBase('/')} data-cursor="link">
       <svg class="brand__mark" viewBox="0 0 64 64" aria-hidden="true">
         <path d="M32 9C32 9 15 30 15 41a17 17 0 0 0 34 0C49 30 32 9 32 9Z" fill="none" stroke="currentColor" stroke-width="3.2"></path>
         <circle cx="32" cy="41" r="5" fill="var(--accent)"></circle>
@@ -38,7 +38,7 @@ const full = [
         {
           primary.map((item) => (
             <li>
-              <a class="site-nav__link link link--quiet" href={`/#${item.id}`} data-spy={item.id}>
+              <a class="site-nav__link link link--quiet" href={withBase(`/#${item.id}`)} data-spy={item.id}>
                 <span class="site-nav__dot" aria-hidden="true" />
                 {item.label}
               </a>
@@ -74,7 +74,7 @@ const full = [
         {
           full.map((item, i) => (
             <li style={`--i:${i}`}>
-              <a class="menu__link" href={`/#${item.id}`} data-menu-link>
+              <a class="menu__link" href={withBase(`/#${item.id}`)} data-menu-link>
                 <span class="menu__index t-caption">{String(i + 1).padStart(2, '0')}</span>
                 <span class="menu__label">{item.label}</span>
               </a>

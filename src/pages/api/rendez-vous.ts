@@ -14,7 +14,7 @@ import {
   type BookingFields,
   type FieldErrors,
 } from '../../lib/booking/validate';
-import { site } from '../../config/site';
+import { site, withBase } from '../../config/site';
 
 export const prerender = false;
 
@@ -44,7 +44,7 @@ export const POST: APIRoute = async ({ request, clientAddress, redirect }) => {
   const wantsJson = request.headers.get('accept')?.includes('application/json') ?? false;
 
   const respond = (outcome: Outcome, errors?: FieldErrors) => {
-    if (!wantsJson) return redirect(`/demande?statut=${outcome}`, 303);
+    if (!wantsJson) return redirect(withBase(`/demande?statut=${outcome}`), 303);
     return new Response(JSON.stringify({ ok: outcome === 'envoyee', outcome, message: MESSAGES[outcome], errors }), {
       status: STATUS[outcome],
       headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },

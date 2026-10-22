@@ -1,7 +1,7 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import Todo from '../components/Todo.astro';
-import { site, fullAddress } from '../config/site';
+import { site, fullAddress, withBase } from '../config/site';
 ---
 
 <LegalLayout
@@ -66,6 +66,6 @@ import { site, fullAddress } from '../config/site';
   <h2>Données personnelles</h2>
   <p>
     Le traitement des données personnelles et l'usage des cookies sont décrits dans la{' '}
-    <a class="link" href="/confidentialite">politique de confidentialité</a>.
+    <a class="link" href={withBase('/confidentialite')}>politique de confidentialité</a>.
   </p>
 </LegalLayout>

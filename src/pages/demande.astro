@@ -1,7 +1,7 @@
 ---
 // Issue de l'envoi du formulaire sans JavaScript (redirection 303 depuis l'API).
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { site } from '../config/site';
+import { site, withBase } from '../config/site';
 
 export const prerender = false;
 
@@ -41,9 +41,9 @@ Astro.response.headers.set('cache-control', 'no-store');
       <h1 class="t-display" id="result-title">{outcome.title}</h1>
       <p class="t-body-lg result__text" role={success ? 'status' : 'alert'}>{outcome.text}</p>
       <ul class="result__links t-ui" role="list">
-        {!success && <li><a class="link" href="/#rendez-vous">Revenir au formulaire</a></li>}
+        {!success && <li><a class="link" href={withBase('/#rendez-vous')}>Revenir au formulaire</a></li>}
         <li><a class="link" href={site.phone.href}>Appeler le {site.phone.display}</a></li>
-        <li><a class="link" href="/">Retour à l'accueil</a></li>
+        <li><a class="link" href={withBase('/')}>Retour à l'accueil</a></li>
       </ul>
     </div>
   </section>

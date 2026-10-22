@@ -1,4 +1,4 @@
-import { site } from '../config/site';
+import { site, withBase } from '../config/site';
 
 export interface FaqEntry {
   id: string;
@@ -17,7 +17,7 @@ export const faq: FaqEntry[] = [
   {
     id: 'rendez-vous',
     question: 'Comment prendre rendez-vous ?',
-    answer: `Envoyez une demande avec le <a href="/#rendez-vous">formulaire de rendez-vous</a> ou appelez le salon au <a href="${site.phone.href}">${site.phone.display}</a>. Une demande envoyée depuis le site n'est pas une réservation ferme : le salon vous répond pour convenir d'un rendez-vous.`,
+    answer: `Envoyez une demande avec le <a href="${withBase('/#rendez-vous')}">formulaire de rendez-vous</a> ou appelez le salon au <a href="${site.phone.href}">${site.phone.display}</a>. Une demande envoyée depuis le site n'est pas une réservation ferme : le salon vous répond pour convenir d'un rendez-vous.`,
   },
   {
     id: 'preparer',
@@ -34,7 +34,7 @@ export const faq: FaqEntry[] = [
   {
     id: 'adresse',
     question: 'Où se trouve le salon ?',
-    answer: `Au ${site.address.street}, ${site.address.postalCode} ${site.address.city}. Les liens d'itinéraire se trouvent dans les <a href="/#infos">informations pratiques</a>.`,
+    answer: `Au ${site.address.street}, ${site.address.postalCode} ${site.address.city}. Les liens d'itinéraire se trouvent dans les <a href="${withBase('/#infos')}">informations pratiques</a>.`,
   },
   {
     id: 'realisations',

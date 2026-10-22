@@ -1,6 +1,6 @@
 ---
 import ExternalIcon from './ExternalIcon.astro';
-import { site, mapLinks } from '../config/site';
+import { site, mapLinks, withBase } from '../config/site';
 
 const year = new Date().getFullYear();
 ---
@@ -36,9 +36,9 @@ const year = new Date().getFullYear();
       </div>
       <nav class="footer__col" aria-label="Informations légales">
         <p class="t-caption footer__label">Informations</p>
-        <a class="link link--quiet" href="/mentions-legales">Mentions légales</a>
-        <a class="link link--quiet" href="/confidentialite">Confidentialité</a>
-        <a class="link link--quiet" href="/cgu">Conditions d'utilisation</a>
+        <a class="link link--quiet" href={withBase('/mentions-legales')}>Mentions légales</a>
+        <a class="link link--quiet" href={withBase('/confidentialite')}>Confidentialité</a>
+        <a class="link link--quiet" href={withBase('/cgu')}>Conditions d'utilisation</a>
         <button class="link link--quiet footer__btn" type="button" data-consent-open>Préférences cookies</button>
         <button class="link link--quiet footer__btn" type="button" data-motion-toggle aria-pressed="false">
           <span data-motion-label>Réduire les animations</span>

@@ -1,5 +1,6 @@
 ---
 import { PUBLIC_GA_MEASUREMENT_ID } from 'astro:env/client';
+import { withBase } from '../config/site';
 
 const hasAnalytics = Boolean(PUBLIC_GA_MEASUREMENT_ID);
 ---
@@ -19,7 +20,7 @@ const hasAnalytics = Boolean(PUBLIC_GA_MEASUREMENT_ID);
         <p class="consent__text">
           Avec votre accord, ce site mesure sa fréquentation avec Google Analytics 4. Ces cookies facultatifs ne sont
           déposés qu'après acceptation. Vous pouvez changer d'avis à tout moment via « Préférences cookies » en bas de page.{' '}
-          <a class="link" href="/confidentialite#cookies">En savoir plus</a>
+          <a class="link" href={withBase('/confidentialite#cookies')}>En savoir plus</a>
         </p>
 
         <div class="consent__details" data-consent-details hidden>
@@ -51,7 +52,7 @@ const hasAnalytics = Boolean(PUBLIC_GA_MEASUREMENT_ID);
         <p class="consent__text">
           Ce site n'utilise actuellement aucun cookie facultatif ni outil de mesure d'audience. Seules des préférences
           d'affichage (animations) peuvent être enregistrées dans votre navigateur.{' '}
-          <a class="link" href="/confidentialite#cookies">En savoir plus</a>
+          <a class="link" href={withBase('/confidentialite#cookies')}>En savoir plus</a>
         </p>
         <div class="consent__actions">
           <button class="btn consent__btn" type="button" data-consent-close>Fermer</button>

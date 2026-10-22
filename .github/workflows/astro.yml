@@ -67,15 +67,19 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
         working-directory: ${{ env.BUILD_PATH }}
       - name: Build with Astro
-        run: |
-          ${{ steps.detect-package-manager.outputs.runner }} astro build \
-            --site "${{ steps.pages.outputs.origin }}" \
-            --base "${{ steps.pages.outputs.base_path }}"
+        run: ${{ steps.detect-package-manager.outputs.runner }} astro build
         working-directory: ${{ env.BUILD_PATH }}
+        env:
+          # Lus par astro.config.mjs (canonique, sitemap, sous-chemin /Thiers-Ink)
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          # Pages ne fait tourner aucun serveur : le formulaire l'indique aux visiteurs
+          PUBLIC_STATIC_PREVIEW: "true"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.BUILD_PATH }}/dist
+          # L'adaptateur Node place les pages statiques dans dist/client
+          path: ${{ env.BUILD_PATH }}/dist/client
 
   deploy:
     environment:
