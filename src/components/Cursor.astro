@@ -1,0 +1,119 @@
+<div class="cursor" aria-hidden="true" data-cursor-root>
+  <span class="cursor__ring" data-cursor-ring><span class="cursor__label" data-cursor-label>Voir</span></span>
+  <span class="cursor__dot" data-cursor-dot></span>
+</div>
+
+<script>
+  import '../scripts/cursor';
+</script>
+
+<style>
+  .cursor {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-cursor);
+    pointer-events: none;
+    display: none;
+  }
+
+  :global(html.has-cursor) .cursor {
+    display: block;
+  }
+
+  :global(html.has-cursor),
+  :global(html.has-cursor *) {
+    cursor: none !important;
+  }
+
+  :global(html.has-cursor :is(input, textarea, select, iframe, [contenteditable])) {
+    cursor: auto !important;
+  }
+
+  .cursor__dot,
+  .cursor__ring {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    will-change: transform;
+  }
+
+  .cursor__dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    background: var(--color-saffron-glow);
+    transition: opacity 0.2s;
+  }
+
+  .cursor__ring {
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--color-parchment);
+    mix-blend-mode: difference;
+    transition:
+      width 0.45s var(--ease-out-expo),
+      height 0.45s var(--ease-out-expo),
+      margin 0.45s var(--ease-out-expo),
+      background-color 0.35s var(--ease-editorial),
+      border-color 0.35s var(--ease-editorial),
+      opacity 0.3s var(--ease-editorial);
+  }
+
+  .cursor__label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0;
+    text-transform: uppercase;
+    color: var(--color-soot);
+    opacity: 0;
+    transform: scale(0.6);
+    transition:
+      opacity 0.3s var(--ease-editorial),
+      transform 0.45s var(--ease-out-expo);
+  }
+
+  .cursor[data-state='link'] .cursor__ring {
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
+    background: rgb(216 203 184 / 0.12);
+  }
+
+  .cursor[data-state='link'] .cursor__dot {
+    opacity: 0;
+  }
+
+  .cursor[data-state='view'] .cursor__ring {
+    width: 88px;
+    height: 88px;
+    margin: -44px 0 0 -44px;
+    background: var(--color-parchment);
+    border-color: var(--color-parchment);
+    mix-blend-mode: normal;
+  }
+
+  .cursor[data-state='view'] .cursor__label {
+    opacity: 1;
+    transform: none;
+  }
+
+  .cursor[data-state='view'] .cursor__dot {
+    opacity: 0;
+  }
+
+  .cursor[data-pressed] .cursor__ring {
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+  }
+
+  .cursor[data-hidden] .cursor__ring,
+  .cursor[data-hidden] .cursor__dot {
+    opacity: 0;
+  }
+</style>

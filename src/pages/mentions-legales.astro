@@ -1,0 +1,71 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import Todo from '../components/Todo.astro';
+import { site, fullAddress } from '../config/site';
+---
+
+<LegalLayout
+  title={`Mentions légales — ${site.name}`}
+  description={`Mentions légales du site de ${site.name}, atelier de tatouage et de piercing à Thiers : éditeur, hébergeur, propriété intellectuelle.`}
+  heading="Mentions légales"
+  updated="22 octobre 2026"
+>
+  <h2>Éditeur du site</h2>
+  <dl>
+    <dt>Nom commercial</dt>
+    <dd>{site.name}</dd>
+    <dt>Exploitant</dt>
+    <dd>{site.owner.name}, entrepreneur individuel <Todo note="(forme juridique à confirmer)" /></dd>
+    <dt>SIREN</dt>
+    <dd>953 459 062 <Todo note="(relevé sur l'annuaire des entreprises, à vérifier)" /></dd>
+    <dt>SIRET de l'établissement</dt>
+    <dd>953 459 062 00022 <Todo /></dd>
+    <dt>Immatriculation</dt>
+    <dd>Registre national des entreprises (RNE) <Todo note="(mention exacte d'immatriculation)" /></dd>
+    <dt>TVA intracommunautaire</dt>
+    <dd><Todo note="(numéro de TVA, ou mention « TVA non applicable, art. 293 B du CGI »)" /></dd>
+    <dt>Adresse de l'établissement</dt>
+    <dd>{fullAddress}, France</dd>
+    <dt>Téléphone</dt>
+    <dd><a class="link" href={site.phone.href}>{site.phone.display}</a></dd>
+    <dt>E-mail</dt>
+    <dd><a class="link" href={`mailto:${site.email}`}>{site.email}</a></dd>
+    <dt>Directeur de la publication</dt>
+    <dd>{site.owner.name} <Todo /></dd>
+  </dl>
+
+  <h2>Hébergement</h2>
+  <dl>
+    <dt>Hébergeur</dt>
+    <dd><Todo note="(raison sociale)" /></dd>
+    <dt>Adresse</dt>
+    <dd><Todo note="(adresse postale de l'hébergeur)" /></dd>
+    <dt>Téléphone</dt>
+    <dd><Todo note="(numéro de téléphone de l'hébergeur)" /></dd>
+  </dl>
+
+  <h2>Propriété intellectuelle</h2>
+  <p>
+    La structure du site, ses textes, ses visuels et le nom {site.name} sont protégés par le droit de la propriété
+    intellectuelle. Toute reproduction, représentation ou adaptation, totale ou partielle, sans l'autorisation écrite de
+    l'éditeur est interdite.
+  </p>
+  <p>
+    Les photographies de tatouages et de piercings publiées sur le site sont diffusées avec l'accord des personnes
+    concernées. Pour demander le retrait d'une image vous représentant, écrivez à
+    <a class="link" href={`mailto:${site.email}`}>{site.email}</a>.
+  </p>
+
+  <h2>Crédits</h2>
+  <ul>
+    <li>Typographies : Satoshi (Indian Type Foundry, ITF Free Font License) et Cormorant Garamond (Christian Thalmann, SIL Open Font License).</li>
+    <li>Carte, sur demande du visiteur : © contributeurs OpenStreetMap.</li>
+    <li>Conception et développement du site : <Todo note="(nom du prestataire, le cas échéant)" /></li>
+  </ul>
+
+  <h2>Données personnelles</h2>
+  <p>
+    Le traitement des données personnelles et l'usage des cookies sont décrits dans la
+    <a class="link" href="/confidentialite">politique de confidentialité</a>.
+  </p>
+</LegalLayout>

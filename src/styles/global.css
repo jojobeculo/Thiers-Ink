@@ -473,14 +473,18 @@ html.js[data-motion='lite'] [data-reveal='fade']:not(.is-in) {
   transform: translate3d(0, var(--reveal-y), 0);
 }
 
-/* masque d'image (rideau vertical) */
-html.js[data-motion='full'] [data-reveal='mask']:not(.is-in),
-html.js[data-motion='lite'] [data-reveal='mask']:not(.is-in) {
-  clip-path: inset(100% 0 0 0);
+/* masque d'image (rideau vertical). Le masque porte sur les enfants : un
+   clip-path sur l'élément observé l'empêcherait d'être détecté à l'écran. */
+html.js[data-motion='full'] [data-reveal='mask'] > *,
+html.js[data-motion='lite'] [data-reveal='mask'] > * {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path var(--dur-slow) var(--ease-out-expo);
+  transition-delay: calc(var(--i, 0) * var(--stagger) + var(--delay, 0s));
 }
 
-html.js[data-motion='full'] [data-reveal='mask'] {
-  clip-path: inset(0 0 0 0);
+html.js[data-motion='full'] [data-reveal='mask']:not(.is-in) > *,
+html.js[data-motion='lite'] [data-reveal='mask']:not(.is-in) > * {
+  clip-path: inset(100% 0 0 0);
 }
 
 html.js[data-motion='full'] [data-reveal='mask'] img {

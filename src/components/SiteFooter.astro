@@ -1,0 +1,145 @@
+---
+import ExternalIcon from './ExternalIcon.astro';
+import { site, mapLinks } from '../config/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer grain" data-surface="dark">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__col">
+        <p class="t-caption footer__label">Adresse</p>
+        <address>
+          {site.address.street}<br />
+          {site.address.postalCode} {site.address.city}<br />
+          {site.address.region}
+        </address>
+        <a class="link t-caption" href={mapLinks.google} target="_blank" rel="noopener noreferrer">
+          Itinéraire<span class="sr-only"> (Google Maps, nouvel onglet)</span>
+          <ExternalIcon />
+        </a>
+      </div>
+      <div class="footer__col">
+        <p class="t-caption footer__label">Contact</p>
+        <a class="link link--quiet" href={site.phone.href}>{site.phone.display}</a>
+        <a class="link link--quiet footer__mail" href={`mailto:${site.email}`}>{site.email}</a>
+      </div>
+      <div class="footer__col">
+        <p class="t-caption footer__label">Réseaux</p>
+        <a class="link link--quiet" href={site.social.instagram.url} target="_blank" rel="noopener noreferrer">
+          Instagram<span class="sr-only"> (nouvel onglet)</span><ExternalIcon />
+        </a>
+        <a class="link link--quiet" href={site.social.facebook} target="_blank" rel="noopener noreferrer">
+          Facebook<span class="sr-only"> (nouvel onglet)</span><ExternalIcon />
+        </a>
+      </div>
+      <nav class="footer__col" aria-label="Informations légales">
+        <p class="t-caption footer__label">Informations</p>
+        <a class="link link--quiet" href="/mentions-legales">Mentions légales</a>
+        <a class="link link--quiet" href="/confidentialite">Confidentialité</a>
+        <a class="link link--quiet" href="/cgu">Conditions d'utilisation</a>
+        <button class="link link--quiet footer__btn" type="button" data-consent-open>Préférences cookies</button>
+        <button class="link link--quiet footer__btn" type="button" data-motion-toggle aria-pressed="false">
+          <span data-motion-label>Réduire les animations</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="footer__mark" aria-hidden="true">
+      <p class="footer__wordmark">{site.name}</p>
+    </div>
+
+    <div class="footer__bottom t-caption">
+      <span>© {year} {site.name} — {site.activity}</span>
+      <span>{site.address.city}, {site.address.region}</span>
+      <a class="link link--quiet" href="#top">Haut de page ↑</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    z-index: 1;
+    padding-top: clamp(64px, 8vw, 120px);
+    padding-bottom: 24px;
+    border-top: 1px solid var(--color-graphite);
+    overflow: hidden;
+  }
+
+  .footer__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 32px var(--gap);
+  }
+
+  .footer__col {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    justify-items: start;
+  }
+
+  .footer__col address {
+    font-style: normal;
+  }
+
+  .footer__label {
+    color: var(--fg-muted);
+    margin-bottom: 6px;
+  }
+
+  .footer__mail {
+    overflow-wrap: anywhere;
+  }
+
+  .footer__btn {
+    border: 0;
+    padding-inline: 0;
+    background-color: transparent;
+    text-align: left;
+    min-height: 32px;
+  }
+
+  .footer__mark {
+    margin-top: clamp(56px, 8vw, 120px);
+    container-type: inline-size;
+  }
+
+  .footer__wordmark {
+    font-family: var(--font-sans);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--fs-wordmark);
+    font-size: calc(100cqi / var(--wordmark-ratio));
+    line-height: 0.8;
+    letter-spacing: -0.016em;
+    text-transform: uppercase;
+    color: var(--color-parchment);
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-graphite);
+    color: var(--fg-muted);
+  }
+
+  @media (max-width: 900px) {
+    .footer__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 480px) {
+    .footer__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,27 @@
+---
+/**
+ * Titre éditorial découpé en lignes (choisies à la main) pour la révélation.
+ * Le texte reste un titre HTML continu pour les lecteurs d'écran.
+ */
+interface Props {
+  as?: 'h1' | 'h2' | 'h3' | 'p';
+  lines: string[];
+  class?: string;
+  id?: string;
+  delay?: number;
+}
+
+const { as: Tag = 'h2', lines, class: className, id, delay = 0 } = Astro.props;
+---
+
+<Tag class:list={['split', className]} id={id} data-reveal="lines" style={`--delay:${delay}s`}>
+  {
+    lines.map((line, i) => (
+      <span class="split-line">
+        <span class="split-inner" style={`--li:${i}`}>
+          {line}
+        </span>
+      </span>
+    ))
+  }
+</Tag>

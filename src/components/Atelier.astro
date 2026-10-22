@@ -1,0 +1,160 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import SplitHeading from './SplitHeading.astro';
+import MaskedImage from './MaskedImage.astro';
+import { site } from '../config/site';
+import encre02 from '../assets/images/etudes/encre-02.jpg';
+---
+
+<section class="atelier section" id="atelier" data-surface="light" aria-labelledby="atelier-title">
+  <div class="container">
+    <SectionHeader index="01" label="L'atelier" aside={`${site.address.city} — ${site.address.region}`} />
+
+    <div class="atelier__grid">
+      <SplitHeading id="atelier-title" class="t-display atelier__title" lines={['Tatouage', '& piercing', 'à Thiers']} />
+
+      <div class="atelier__text">
+        <div class="prose t-body-lg" data-reveal="fade">
+          <p>
+            {site.name} est l'atelier de tatouage et de piercing d'{site.owner.name}, au {site.address.street} à {
+              site.address.city
+            }.
+          </p>
+        </div>
+        <div class="prose atelier__body" data-reveal="fade" style="--i:1">
+          <p>
+            Un projet commence par une demande : décrivez votre idée, l'emplacement et la taille envisagée, et joignez une
+            image de référence si vous en avez une. Le salon vous répond pour en parler et fixer un rendez-vous.
+          </p>
+        </div>
+
+        <dl class="atelier__facts" data-reveal="fade" style="--i:2">
+          <div>
+            <dt class="t-caption">Activité</dt>
+            <dd>Tatouage · Piercing</dd>
+          </div>
+          <div>
+            <dt class="t-caption">Adresse</dt>
+            <dd>{site.address.street}, {site.address.postalCode} {site.address.city}</dd>
+          </div>
+          <div>
+            <dt class="t-caption">Téléphone</dt>
+            <dd><a class="link" href={site.phone.href}>{site.phone.display}</a></dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <figure class="atelier__figure">
+      <MaskedImage
+        src={encre02}
+        alt="Visuel provisoire : nappe d'encre aux reflets clairs sur fond noir."
+        sizes="(min-width: 1440px) 1000px, (min-width: 900px) 70vw, 100vw"
+        provisional
+        parallax={0.08}
+        class="atelier__image"
+      />
+      <figcaption class="t-caption atelier__caption">
+        <span>Étude d'encre</span>
+        <span class="t-muted">Les photographies de l'atelier remplaceront ce visuel.</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .atelier {
+    position: relative;
+    z-index: 1;
+  }
+
+  .atelier__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--gap) clamp(16px, 3vw, 48px);
+    align-items: start;
+  }
+
+  .atelier__grid :global(.atelier__title) {
+    grid-column: 1 / span 7;
+  }
+
+  .atelier__text {
+    grid-column: 8 / span 5;
+    display: grid;
+    gap: 24px;
+    padding-top: 0.4em;
+  }
+
+  .atelier__body {
+    color: var(--fg-muted);
+  }
+
+  .atelier__facts {
+    display: grid;
+    border-top: 1px solid var(--rule);
+  }
+
+  .atelier__facts > div {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 12px;
+    padding-block: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .atelier__facts dt {
+    color: var(--fg-muted);
+    padding-top: 2px;
+  }
+
+  .atelier__facts dd {
+    margin: 0;
+  }
+
+  .atelier__figure {
+    margin-top: clamp(56px, 8vw, 120px);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+
+  .atelier__figure :global(.atelier__image) {
+    grid-column: 3 / -1;
+    aspect-ratio: 16 / 9;
+  }
+
+  .atelier__caption {
+    grid-column: 3 / -1;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 10px;
+    border-top: 1px solid var(--rule);
+  }
+
+  @media (max-width: 900px) {
+    .atelier__grid :global(.atelier__title),
+    .atelier__text {
+      grid-column: 1 / -1;
+    }
+    .atelier__figure :global(.atelier__image),
+    .atelier__caption {
+      grid-column: 1 / -1;
+    }
+    .atelier__caption {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .atelier__facts > div {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+    .atelier__figure :global(.atelier__image) {
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>

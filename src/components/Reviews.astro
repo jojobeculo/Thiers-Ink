@@ -1,0 +1,199 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import SplitHeading from './SplitHeading.astro';
+import ExternalIcon from './ExternalIcon.astro';
+import { reviews } from '../data/reviews';
+import { site, mapLinks } from '../config/site';
+
+const sources = [
+  { label: 'Lire les avis sur Google', meta: 'Google Maps', href: mapLinks.google },
+  { label: 'Voir la page Facebook', meta: 'Facebook', href: site.social.facebook },
+];
+---
+
+<section class="reviews section" id="avis" data-surface="light" aria-labelledby="avis-title">
+  <div class="container">
+    <SectionHeader index="05" label="Avis" aside="Sources publiques" />
+
+    <div class="reviews__grid">
+      <SplitHeading id="avis-title" class="t-display" lines={['Avis', 'clients']} />
+      <p class="reviews__intro t-body-lg" data-reveal="fade">
+        Les avis laissés par les clients de {site.name} sont publiés sur Google et sur Facebook.
+      </p>
+    </div>
+
+    {
+      reviews.length > 0 && (
+        <ul class="reviews__cards" role="list">
+          {reviews.map((review, i) => (
+            <li class="review" data-reveal="fade" style={`--i:${i}`}>
+              <div class="review__top">
+                <span class="review__stars" role="img" aria-label={`Note : ${review.rating} sur 5`}>
+                  {Array.from({ length: 5 }, (_, s) => (
+                    <svg viewBox="0 0 16 16" aria-hidden="true" class:list={[s < review.rating ? 'is-on' : 'is-off']}>
+                      <path d="M8 1.2l2 4.3 4.7.5-3.5 3.2 1 4.6L8 11.5l-4.2 2.3 1-4.6L1.3 6l4.7-.5z" />
+                    </svg>
+                  ))}
+                </span>
+                <span class="t-caption">{review.source}</span>
+              </div>
+              <blockquote class="review__text">
+                <p>{review.text}</p>
+              </blockquote>
+              <p class="review__author t-caption">
+                <a href={review.url} target="_blank" rel="noopener noreferrer">
+                  {review.author}
+                  <span class="sr-only"> (avis sur {review.source}, nouvel onglet)</span>
+                </a>
+                · {review.date}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <ul class="reviews__sources" role="list">
+      {
+        sources.map((source, i) => (
+          <li data-reveal="fade" style={`--i:${i}`}>
+            <a class="source-link" href={source.href} target="_blank" rel="noopener noreferrer" data-cursor="link">
+              <span class="t-caption source-link__meta">{source.meta}</span>
+              <span class="source-link__label t-heading-sm">{source.label}</span>
+              <span class="sr-only">(nouvel onglet)</span>
+              <ExternalIcon />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .reviews {
+    position: relative;
+    z-index: 1;
+  }
+
+  .reviews__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 24px var(--gap);
+    align-items: end;
+    margin-bottom: clamp(40px, 6vw, 88px);
+  }
+
+  .reviews__grid :global(h2) {
+    grid-column: 1 / span 7;
+  }
+
+  .reviews__intro {
+    grid-column: 8 / -1;
+    max-width: 30ch;
+  }
+
+  .reviews__sources {
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .reviews__sources li {
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .source-link {
+    display: grid;
+    grid-template-columns: 10rem 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding-block: clamp(20px, 3vw, 36px);
+    text-decoration: none;
+  }
+
+  .source-link__meta {
+    color: var(--fg-muted);
+  }
+
+  .source-link__label {
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+
+  .source-link :global(.ext-icon) {
+    width: 28px;
+    height: 28px;
+  }
+
+  .source-link:hover .source-link__label,
+  .source-link:focus-visible .source-link__label {
+    transform: translateX(14px);
+  }
+
+  .source-link:hover :global(.ext-icon) {
+    transform: translate(4px, -4px);
+  }
+
+  /* Carte d'avis (référence : fond identique au canevas, sans ombre ni bordure) */
+  .reviews__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: var(--gap);
+    margin-bottom: clamp(40px, 6vw, 88px);
+  }
+
+  .review {
+    display: grid;
+    gap: 20px;
+    align-content: start;
+    padding: 52px 28px 32px;
+    background: var(--bg);
+    border-radius: var(--radius-cards);
+  }
+
+  .review__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .review__stars {
+    display: inline-flex;
+    gap: 3px;
+  }
+
+  .review__stars svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* Safran assombri (rust) : contraste suffisant sur parchemin */
+  .review__stars .is-on {
+    fill: var(--accent);
+  }
+
+  .review__stars .is-off {
+    fill: none;
+    stroke: var(--accent);
+  }
+
+  .review__text {
+    margin: 0;
+    font-size: var(--fs-small);
+  }
+
+  .review__author {
+    color: var(--fg-muted);
+  }
+
+  @media (max-width: 900px) {
+    .reviews__grid :global(h2),
+    .reviews__intro {
+      grid-column: 1 / -1;
+    }
+    .source-link {
+      grid-template-columns: 1fr auto;
+    }
+    .source-link__meta {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

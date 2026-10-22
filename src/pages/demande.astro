@@ -1,0 +1,81 @@
+---
+// Issue de l'envoi du formulaire sans JavaScript (redirection 303 depuis l'API).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config/site';
+
+export const prerender = false;
+
+const outcomes = {
+  envoyee: {
+    title: 'Demande envoyée',
+    text: 'Votre demande a bien été envoyée au salon.',
+  },
+  invalide: {
+    title: 'Demande incomplète',
+    text: "Certains champs étaient manquants ou invalides : la demande n'a pas été envoyée. Revenez au formulaire pour la compléter.",
+  },
+  limite: {
+    title: 'Trop de demandes',
+    text: "Trop de demandes ont été envoyées depuis votre connexion : celle-ci n'a pas été envoyée. Réessayez dans quelques minutes.",
+  },
+  indisponible: {
+    title: 'Envoi indisponible',
+    text: `L'envoi en ligne est momentanément indisponible : la demande n'a pas été envoyée. Appelez le salon au ${site.phone.display}.`,
+  },
+  erreur: {
+    title: 'Envoi impossible',
+    text: `La demande n'a pas pu être envoyée. Réessayez ou appelez le salon au ${site.phone.display}.`,
+  },
+} as const;
+
+const key = Astro.url.searchParams.get('statut') ?? '';
+const outcome = key in outcomes ? outcomes[key as keyof typeof outcomes] : outcomes.erreur;
+const success = key === 'envoyee';
+Astro.response.headers.set('cache-control', 'no-store');
+---
+
+<BaseLayout title={`${outcome.title} — ${site.name}`} description={outcome.text} noindex>
+  <section class="result grain" id="top" data-surface="dark" aria-labelledby="result-title">
+    <div class="container result__inner">
+      <p class="t-caption result__meta">Demande de rendez-vous</p>
+      <h1 class="t-display" id="result-title">{outcome.title}</h1>
+      <p class="t-body-lg result__text" role={success ? 'status' : 'alert'}>{outcome.text}</p>
+      <ul class="result__links t-ui" role="list">
+        {!success && <li><a class="link" href="/#rendez-vous">Revenir au formulaire</a></li>}
+        <li><a class="link" href={site.phone.href}>Appeler le {site.phone.display}</a></li>
+        <li><a class="link" href="/">Retour à l'accueil</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .result {
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-top: calc(var(--header-h) + 48px);
+    padding-bottom: 64px;
+  }
+
+  .result__inner {
+    display: grid;
+    gap: 28px;
+  }
+
+  .result__meta {
+    color: var(--accent);
+  }
+
+  .result__text {
+    max-width: 40ch;
+  }
+
+  .result__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+  }
+</style>

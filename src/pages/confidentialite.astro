@@ -1,0 +1,139 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import Todo from '../components/Todo.astro';
+import { PUBLIC_GA_MEASUREMENT_ID } from 'astro:env/client';
+import { site, fullAddress } from '../config/site';
+
+const analytics = Boolean(PUBLIC_GA_MEASUREMENT_ID);
+---
+
+<LegalLayout
+  title={`Politique de confidentialité — ${site.name}`}
+  description={`Données personnelles et cookies sur le site de ${site.name} : formulaire de rendez-vous, mesure d'audience, droits des personnes.`}
+  heading="Confidentialité"
+  updated="22 octobre 2026"
+>
+  <h2>Responsable du traitement</h2>
+  <p>
+    {site.owner.name}, entrepreneur individuel exploitant l'atelier {site.name}, {fullAddress}. Contact :
+    <a class="link" href={`mailto:${site.email}`}>{site.email}</a> ou <a class="link" href={site.phone.href}>{site.phone.display}</a>.
+  </p>
+
+  <h2>Formulaire de demande de rendez-vous</h2>
+  <h3>Données collectées</h3>
+  <p>
+    Nom, adresse e-mail, téléphone (facultatif), type de demande, zone du corps, taille approximative et style souhaité
+    (facultatifs), description du projet et image de référence (facultative).
+  </p>
+  <h3>Finalité et base légale</h3>
+  <p>
+    Répondre à votre demande et organiser un éventuel rendez-vous. Ce traitement repose sur les mesures
+    précontractuelles prises à votre demande (article 6.1.b du RGPD).
+  </p>
+  <h3>Circuit des données</h3>
+  <p>
+    À l'envoi, le serveur du site vérifie le formulaire puis transmet son contenu par e-mail à l'adresse du salon. Le site
+    ne conserve pas les demandes : il n'existe pas de base de données des demandes. Le message est stocké dans la
+    messagerie du salon.
+  </p>
+  <p>
+    Service d'envoi des e-mails (SMTP) : <Todo note="(nom du prestataire de messagerie)" /><br />
+    Durée de conservation des demandes dans la messagerie du salon : <Todo note="(durée décidée par le salon)" />
+  </p>
+  <p>
+    N'indiquez pas d'informations de santé ni d'autres données sensibles dans votre message, sauf si elles sont
+    nécessaires à votre projet.
+  </p>
+
+  <h2>Sécurité et prévention des abus</h2>
+  <p>
+    Pour limiter les envois automatisés, le serveur garde en mémoire l'adresse IP de l'expéditeur pendant 15 minutes au
+    plus afin de limiter le nombre de demandes. Cette adresse n'est pas enregistrée par le site et n'est utilisée à aucune
+    autre fin (intérêt légitime : sécurité du service). Les journaux techniques de l'hébergeur :
+    <Todo note="(nature et durée de conservation selon l'hébergeur)" />
+  </p>
+
+  <h2 id="cookies">Cookies et stockage local</h2>
+  <p>
+    {
+      analytics
+        ? "Le site n'utilise de cookies facultatifs qu'avec votre accord. Le refus est aussi simple que l'acceptation et vous pouvez changer d'avis à tout moment avec le bouton « Préférences cookies » en bas de chaque page."
+        : "Le site n'utilise actuellement aucun cookie facultatif ni outil de mesure d'audience."
+    }
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th scope="col">Nom</th><th scope="col">Finalité</th><th scope="col">Durée</th><th scope="col">Consentement</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>thiersink:consent (stockage local)</td>
+          <td>Mémoriser votre choix concernant les cookies facultatifs</td>
+          <td>6 mois</td>
+          <td>Non requis</td>
+        </tr>
+        <tr>
+          <td>thiersink:motion (stockage local)</td>
+          <td>Mémoriser votre préférence « Réduire les animations »</td>
+          <td>Jusqu'à suppression par vos soins</td>
+          <td>Non requis</td>
+        </tr>
+        {
+          analytics && (
+            <tr>
+              <td>_ga, _ga_&lt;ID&gt; (cookies)</td>
+              <td>Mesure d'audience Google Analytics 4</td>
+              <td>13 mois</td>
+              <td>Requis</td>
+            </tr>
+          )
+        }
+      </tbody>
+    </table>
+  </div>
+
+  {
+    analytics && (
+      <>
+        <h2>Mesure d'audience</h2>
+        <p>
+          Si vous l'acceptez, le site utilise Google Analytics 4 (Google Ireland Limited) pour mesurer sa fréquentation :
+          pages consultées, type d'appareil, localisation approximative. Les signaux Google et la personnalisation
+          publicitaire sont désactivés. Base légale : votre consentement (article 6.1.a du RGPD), que vous pouvez
+          retirer à tout moment. Des données peuvent être transférées vers Google LLC aux États-Unis, dans le cadre du
+          Data Privacy Framework UE–États-Unis.
+        </p>
+      </>
+    )
+  }
+
+  <h2>Carte et services externes</h2>
+  <p>
+    La carte de la section « Infos pratiques » n'est chargée que si vous cliquez sur « Afficher la carte ». Elle provient
+    d'OpenStreetMap (OpenStreetMap Foundation), qui reçoit alors votre adresse IP.
+  </p>
+  <p>
+    Les liens vers Instagram, Facebook, Google Maps, OpenStreetMap et Plans (Apple) ouvrent ces services, soumis à leurs
+    propres politiques de confidentialité. Aucun de leurs scripts n'est intégré au site.
+  </p>
+
+  <h2>Destinataires</h2>
+  <ul>
+    <li>{site.owner.name} ({site.name}), seul destinataire des demandes.</li>
+    <li>L'hébergeur du site : <Todo /></li>
+    <li>Le prestataire d'envoi des e-mails : <Todo /></li>
+    {analytics && <li>Google, pour la mesure d'audience, uniquement après votre accord.</li>}
+  </ul>
+
+  <h2>Vos droits</h2>
+  <p>
+    Vous disposez des droits d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité, ainsi
+    que du droit de retirer votre consentement et de définir des directives sur le sort de vos données après votre décès.
+    Pour les exercer, écrivez à <a class="link" href={`mailto:${site.email}`}>{site.email}</a>.
+  </p>
+  <p>
+    Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL :
+    <a class="link" href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener noreferrer">cnil.fr<span class="sr-only"> (nouvel onglet)</span></a>.
+  </p>
+</LegalLayout>

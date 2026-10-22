@@ -1,0 +1,157 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import SplitHeading from './SplitHeading.astro';
+import ExternalIcon from './ExternalIcon.astro';
+import { site } from '../config/site';
+
+const [firstName, ...rest] = site.owner.name.split(' ');
+---
+
+<section class="artist section grain" id="artiste" data-surface="charcoal" aria-labelledby="artiste-title">
+  <div class="container artist__grid">
+    <div class="artist__head">
+      <SectionHeader index="04" label="L'artiste" aside={site.owner.role} />
+    </div>
+
+    <div class="artist__portrait" data-reveal="mask" data-tilt>
+      <div class="artist__monogram" aria-hidden="true">
+        <svg class="artist__rings" viewBox="0 0 400 500" fill="none" stroke="currentColor" stroke-width="0.8">
+          <circle cx="200" cy="240" r="150"></circle>
+          <circle cx="200" cy="240" r="118" stroke-dasharray="2 6"></circle>
+          <line x1="200" y1="40" x2="200" y2="470"></line>
+          <circle cx="200" cy="40" r="3" fill="currentColor"></circle>
+          <circle cx="200" cy="470" r="3" fill="currentColor"></circle>
+        </svg>
+        <span class="artist__initials">{firstName[0]}{rest.join(' ')[0]}</span>
+      </div>
+      <span class="tag tag--provisional artist__tag">Portrait à venir</span>
+    </div>
+
+    <div class="artist__text">
+      <SplitHeading id="artiste-title" class="t-display" lines={[firstName, rest.join(' ')]} />
+      <p class="t-caption artist__role" data-reveal="fade">{site.owner.role} — {site.name}</p>
+      <div class="prose t-body-lg" data-reveal="fade" style="--i:1">
+        <p>
+          {site.owner.name} tient l'atelier {site.name} à {site.address.city} et y réalise tatouages et piercings.
+        </p>
+      </div>
+      <a
+        class="link t-ui"
+        href={site.social.instagram.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-reveal="fade"
+        style="--i:2"
+      >
+        Suivre son travail sur Instagram<span class="sr-only"> (nouvel onglet)</span>
+        <ExternalIcon />
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { getTier } from '../scripts/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {
+    el.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || getTier() !== 'full') return;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--tx', `${(((e.clientX - r.left) / r.width - 0.5) * 10).toFixed(2)}deg`);
+      el.style.setProperty('--ty', `${(-((e.clientY - r.top) / r.height - 0.5) * 10).toFixed(2)}deg`);
+    });
+    el.addEventListener('pointerleave', () => {
+      el.style.removeProperty('--tx');
+      el.style.removeProperty('--ty');
+    });
+  });
+</script>
+
+<style>
+  .artist {
+    position: relative;
+    z-index: 1;
+  }
+
+  .artist__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(24px, 4vw, 64px) var(--gap);
+    align-items: end;
+  }
+
+  .artist__head {
+    grid-column: 1 / -1;
+  }
+
+  .artist__portrait {
+    grid-column: 1 / span 5;
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--color-soot);
+    border: 1px solid var(--color-graphite);
+    perspective: 900px;
+  }
+
+  .artist__monogram {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--color-walnut);
+    transform: rotateY(var(--tx, 0deg)) rotateX(var(--ty, 0deg));
+    transition: transform 0.8s var(--ease-out-expo);
+    transform-style: preserve-3d;
+  }
+
+  .artist__rings {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
+  }
+
+  .artist__initials {
+    font-family: var(--font-serif);
+    font-weight: var(--font-weight-light);
+    font-style: italic;
+    font-size: clamp(6rem, 14vw, 13rem);
+    line-height: 1;
+    letter-spacing: -0.06em;
+    color: var(--color-parchment);
+    transform: translateZ(40px);
+  }
+
+  .artist__tag {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+  }
+
+  .artist__text {
+    grid-column: 7 / -1;
+    display: grid;
+    gap: 24px;
+    justify-items: start;
+  }
+
+  .artist__role {
+    color: var(--accent);
+  }
+
+  @media (max-width: 900px) {
+    .artist__portrait {
+      grid-column: 1 / span 8;
+    }
+    .artist__text {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .artist__portrait {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

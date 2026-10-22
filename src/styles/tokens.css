@@ -164,8 +164,11 @@
   --fs-small: 14px;
   --fs-caption: 12px;
 
-  /* Mot-symbole (référence : Satoshi 500, 199 px) calé sur la largeur utile. */
-  --fs-wordmark: min(15.6vw, 199px);
+  /* Mot-symbole (référence : Satoshi 500, 199 px). « THIERSINK » mesure 4,865 em :
+     la taille est calée sur la largeur du conteneur (unités cqi) pour l'occuper
+     entièrement, avec l'interlettrage serré de la référence. */
+  --wordmark-ratio: 4.9;
+  --fs-wordmark: min(19vw, 290px);
 
   --tracking-display-em: -0.04em;
   --tracking-heading-em: -0.03em;

@@ -1,0 +1,157 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import SplitHeading from './SplitHeading.astro';
+import { publishedFaq } from '../data/faq';
+---
+
+<section class="faq section" id="faq" data-surface="light" aria-labelledby="faq-title">
+  <div class="container faq__grid">
+    <div class="faq__head">
+      <SectionHeader index="08" label="Questions" aside="Rendez-vous · Projet · Accès" />
+      <SplitHeading id="faq-title" class="t-heading-lg" lines={['Questions', 'fréquentes']} />
+    </div>
+
+    <div class="faq__list">
+      {
+        publishedFaq.map((entry, i) => (
+          <details class:list={['faq__item', entry.draft && 'faq__item--draft']} data-reveal="fade" style={`--i:${i}`}>
+            <summary class="faq__question">
+              <span class="faq__num t-caption">{String(i + 1).padStart(2, '0')}</span>
+              <span class="faq__q">{entry.question}</span>
+              <span class="faq__icon" aria-hidden="true" />
+            </summary>
+            <div class="faq__answer prose">
+              <p set:html={entry.answer} />
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    position: relative;
+    z-index: 1;
+  }
+
+  .faq__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 32px var(--gap);
+  }
+
+  .faq__head {
+    grid-column: 1 / -1;
+  }
+
+  .faq__list {
+    grid-column: 4 / -1;
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .faq__item {
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .faq__item--draft {
+    outline: 1px dashed var(--accent);
+    outline-offset: -1px;
+  }
+
+  .faq__question {
+    display: grid;
+    grid-template-columns: 3rem 1fr 24px;
+    align-items: center;
+    gap: 16px;
+    min-height: 64px;
+    padding-block: 20px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__num {
+    color: var(--accent);
+  }
+
+  .faq__q {
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    transition: transform var(--dur-base) var(--ease-editorial);
+  }
+
+  .faq__question:hover .faq__q {
+    transform: translateX(6px);
+  }
+
+  .faq__icon {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    justify-self: end;
+  }
+
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: currentColor;
+    transition: transform var(--dur-base) var(--ease-editorial);
+  }
+
+  .faq__icon::after {
+    transform: rotate(90deg);
+  }
+
+  .faq__item[open] .faq__icon::after {
+    transform: rotate(0deg);
+  }
+
+  .faq__answer {
+    padding: 0 0 24px calc(3rem + 16px);
+    color: var(--fg-muted);
+  }
+
+  .faq__answer :global(a) {
+    color: var(--fg);
+  }
+
+  /* Ouverture animée là où le navigateur le permet */
+  @supports (interpolate-size: allow-keywords) {
+    .faq__item {
+      interpolate-size: allow-keywords;
+    }
+    .faq__item::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition:
+        block-size 0.5s var(--ease-out-expo),
+        content-visibility 0.5s allow-discrete;
+    }
+    .faq__item[open]::details-content {
+      block-size: auto;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .faq__list {
+      grid-column: 1 / -1;
+    }
+    .faq__answer {
+      padding-left: 0;
+    }
+    .faq__question {
+      grid-template-columns: 2.25rem 1fr 20px;
+    }
+  }
+</style>

@@ -1,0 +1,197 @@
+---
+import { PUBLIC_GA_MEASUREMENT_ID } from 'astro:env/client';
+
+const hasAnalytics = Boolean(PUBLIC_GA_MEASUREMENT_ID);
+---
+
+<section
+  class="consent"
+  data-consent
+  data-surface="dark"
+  aria-labelledby="consent-title"
+  hidden
+>
+  <h2 class="consent__title t-caption" id="consent-title" tabindex="-1">Cookies et mesure d'audience</h2>
+
+  {
+    hasAnalytics ? (
+      <>
+        <p class="consent__text">
+          Avec votre accord, ce site mesure sa fréquentation avec Google Analytics 4. Ces cookies facultatifs ne sont
+          déposés qu'après acceptation. Vous pouvez changer d'avis à tout moment via « Préférences cookies » en bas de page.{' '}
+          <a class="link" href="/confidentialite#cookies">En savoir plus</a>
+        </p>
+
+        <div class="consent__details" data-consent-details hidden>
+          <label class="switch">
+            <input type="checkbox" data-consent-analytics />
+            <span class="switch__track" aria-hidden="true" />
+            <span class="switch__label">
+              <strong>Mesure d'audience</strong>
+              <span class="t-muted">Google Analytics 4 : pages vues et parcours, de façon agrégée.</span>
+            </span>
+          </label>
+          <p class="t-muted consent__note">
+            Les préférences d'affichage (consentement, animations) sont enregistrées dans votre navigateur et ne servent
+            qu'au fonctionnement du site.
+          </p>
+        </div>
+
+        <div class="consent__actions">
+          <button class="btn consent__btn" type="button" data-consent-reject>Tout refuser</button>
+          <button class="btn consent__btn" type="button" data-consent-accept>Tout accepter</button>
+          <button class="link consent__more" type="button" data-consent-customize aria-expanded="false">
+            Personnaliser
+          </button>
+          <button class="btn consent__btn" type="button" data-consent-save hidden>Enregistrer mes choix</button>
+        </div>
+      </>
+    ) : (
+      <>
+        <p class="consent__text">
+          Ce site n'utilise actuellement aucun cookie facultatif ni outil de mesure d'audience. Seules des préférences
+          d'affichage (animations) peuvent être enregistrées dans votre navigateur.{' '}
+          <a class="link" href="/confidentialite#cookies">En savoir plus</a>
+        </p>
+        <div class="consent__actions">
+          <button class="btn consent__btn" type="button" data-consent-close>Fermer</button>
+        </div>
+      </>
+    )
+  }
+</section>
+
+<script>
+  import '../scripts/consent';
+</script>
+
+<style>
+  .consent {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: var(--z-consent);
+    width: min(460px, calc(100% - 32px));
+    max-height: calc(100svh - 32px);
+    overflow-y: auto;
+    display: grid;
+    gap: 16px;
+    padding: 24px;
+    border: 1px solid var(--color-walnut);
+    border-radius: var(--radius-cards);
+    background: var(--color-soot);
+    color: var(--color-parchment);
+  }
+
+  .consent[hidden] {
+    display: none;
+  }
+
+  .consent__title {
+    color: var(--color-saffron-glow);
+  }
+
+  .consent__title:focus {
+    outline: none;
+  }
+
+  .consent__text {
+    font-size: var(--fs-small);
+  }
+
+  .consent__details {
+    display: grid;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-graphite);
+  }
+
+  .consent__note {
+    font-size: 13px;
+  }
+
+  .consent__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .consent__btn {
+    min-height: 44px;
+    padding: 12px 16px;
+    font-size: 13px;
+    flex: 1 1 auto;
+  }
+
+  .consent__more {
+    min-height: 44px;
+    border: 0;
+    padding-inline: 0;
+    background-color: transparent;
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+  }
+
+  .switch {
+    position: relative;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 14px;
+    align-items: start;
+    cursor: pointer;
+  }
+
+  .switch input {
+    position: absolute;
+    width: 44px;
+    height: 24px;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .switch__track {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    border: 1px solid var(--color-walnut);
+    border-radius: 12px;
+    transition: background-color var(--dur-base) var(--ease-editorial);
+  }
+
+  .switch__track::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-walnut);
+    transition:
+      transform var(--dur-base) var(--ease-out-expo),
+      background-color var(--dur-base) var(--ease-editorial);
+  }
+
+  .switch input:checked + .switch__track {
+    background: var(--color-parchment);
+    border-color: var(--color-parchment);
+  }
+
+  .switch input:checked + .switch__track::after {
+    transform: translateX(20px);
+    background: var(--color-soot);
+  }
+
+  .switch input:focus-visible + .switch__track {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .switch__label {
+    display: grid;
+    gap: 4px;
+    font-size: var(--fs-small);
+  }
+</style>

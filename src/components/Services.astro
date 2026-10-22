@@ -1,0 +1,225 @@
+---
+import { Picture } from 'astro:assets';
+import SectionHeader from './SectionHeader.astro';
+import SplitHeading from './SplitHeading.astro';
+import BookingButton from './BookingButton.astro';
+import { services } from '../data/services';
+---
+
+<section class="services section" id="prestations" data-surface="light" data-plane aria-labelledby="prestations-title">
+  <div class="container">
+    <SectionHeader index="03" label="Prestations" aside="Tatouage · Piercing" />
+    <SplitHeading id="prestations-title" class="t-display services__title" lines={['Prestations']} />
+
+    <ol class="services__list" role="list" data-services>
+      {
+        services.map((service, i) => (
+          <li class="service" data-service={service.id} data-reveal="fade" style={`--i:${i}`}>
+            <span class="service__num t-caption">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="service__name t-heading">{service.name}</h3>
+            <div class="service__body">
+              <p>{service.summary}</p>
+              <ul class="service__items" role="list">
+                {service.items.map((item) => (
+                  <li class="tag">{item}</li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="services__cta" data-reveal="fade">
+      <p class="t-muted">Tarifs et disponibilités : décrivez votre projet dans la demande de rendez-vous.</p>
+      <BookingButton />
+    </div>
+  </div>
+
+  <div class="services__preview" aria-hidden="true" data-service-preview>
+    {
+      services.map((service) => (
+        <div class="services__preview-item" data-preview={service.id}>
+          <Picture src={service.preview} alt="" widths={[360, 540]} sizes="270px" formats={['avif', 'webp']} quality={70} />
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  import { getTier } from '../scripts/motion';
+
+  // Aperçu flottant qui suit le pointeur au survol d'une prestation (souris, niveau full).
+  const list = document.querySelector<HTMLElement>('[data-services]');
+  const preview = document.querySelector<HTMLElement>('[data-service-preview]');
+  if (list && preview && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const pos = { x: 0, y: 0, tx: 0, ty: 0, r: 0 };
+    let raf = 0;
+    let activeId: string | null = null;
+    const loop = () => {
+      const dx = pos.tx - pos.x;
+      pos.x += dx * 0.14;
+      pos.y += (pos.ty - pos.y) * 0.14;
+      pos.r += (Math.max(-8, Math.min(8, dx * 0.08)) - pos.r) * 0.1;
+      preview.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0) rotate(${pos.r.toFixed(2)}deg)`;
+      raf = activeId || Math.abs(dx) > 0.5 ? requestAnimationFrame(loop) : 0;
+    };
+    const setActive = (id: string | null) => {
+      activeId = id;
+      preview.querySelectorAll<HTMLElement>('[data-preview]').forEach((el) => {
+        el.toggleAttribute('data-active', el.dataset.preview === id);
+      });
+      preview.toggleAttribute('data-visible', id !== null);
+    };
+    list.addEventListener('pointermove', (e) => {
+      if (getTier() !== 'full' || e.pointerType !== 'mouse') return;
+      const item = (e.target as HTMLElement).closest<HTMLElement>('[data-service]');
+      pos.tx = e.clientX + 24;
+      pos.ty = e.clientY - 160;
+      if (!activeId) {
+        pos.x = pos.tx;
+        pos.y = pos.ty;
+      }
+      setActive(item?.dataset.service ?? null);
+      if (!raf) raf = requestAnimationFrame(loop);
+    });
+    list.addEventListener('pointerleave', () => setActive(null));
+  }
+</script>
+
+<style>
+  .services {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    isolation: isolate;
+  }
+
+  /* Le fond parchemin s'élargit à l'entrée de la section (niveau full). */
+  .services::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--bg);
+    transform: scaleX(calc(0.9 + var(--plane, 1) * 0.1));
+  }
+
+  .services :global(.services__title) {
+    margin-bottom: clamp(40px, 6vw, 96px);
+  }
+
+  .services__list {
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .service {
+    position: relative;
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 5fr) minmax(0, 5fr);
+    gap: 16px clamp(16px, 3vw, 48px);
+    align-items: start;
+    padding-block: clamp(28px, 4vw, 52px);
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .service::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.8s var(--ease-out-expo);
+  }
+
+  .service:hover::after {
+    transform: scaleX(1);
+  }
+
+  .service__num {
+    color: var(--accent);
+    padding-top: 0.7em;
+  }
+
+  .service__name {
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+
+  .service:hover .service__name {
+    transform: translateX(12px);
+  }
+
+  .service__body {
+    display: grid;
+    gap: 18px;
+    max-width: 46ch;
+    padding-top: 0.5em;
+  }
+
+  .service__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .services__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px 32px;
+    margin-top: clamp(40px, 5vw, 72px);
+  }
+
+  .services__preview {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 5;
+    width: 270px;
+    aspect-ratio: 4 / 5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s var(--ease-editorial);
+  }
+
+  .services__preview[data-visible] {
+    opacity: 1;
+  }
+
+  .services__preview-item {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 0.6s var(--ease-out-expo);
+  }
+
+  .services__preview-item[data-active] {
+    clip-path: inset(0 0 0 0);
+  }
+
+  .services__preview-item :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  :global(html:not([data-motion='full'])) .services__preview {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    .service {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+    }
+    .service__body {
+      grid-column: 2;
+    }
+  }
+</style>

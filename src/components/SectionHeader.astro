@@ -1,0 +1,38 @@
+---
+interface Props {
+  index: string;
+  label: string;
+  aside?: string;
+}
+
+const { index, label, aside } = Astro.props;
+---
+
+<div class="section-header">
+  <div class="section-meta t-caption">
+    <span><span class="section-meta__index">{index}</span> — {label}</span>
+    {aside && <span>{aside}</span>}
+  </div>
+  <span class="section-header__rule" data-reveal="rule" aria-hidden="true"></span>
+</div>
+
+<style>
+  .section-header {
+    position: relative;
+    margin-bottom: clamp(36px, 5vw, 72px);
+  }
+
+  .section-meta {
+    border-bottom-color: transparent;
+  }
+
+  .section-header__rule {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--rule-strong);
+    opacity: 0.55;
+  }
+</style>

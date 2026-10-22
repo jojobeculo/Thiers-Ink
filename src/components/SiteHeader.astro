@@ -1,0 +1,446 @@
+---
+import BookingButton from './BookingButton.astro';
+import ExternalIcon from './ExternalIcon.astro';
+import { site } from '../config/site';
+
+const primary = [
+  { id: 'atelier', label: "L'atelier" },
+  { id: 'portfolio', label: 'Portfolio' },
+  { id: 'prestations', label: 'Prestations' },
+  { id: 'infos', label: 'Infos pratiques' },
+  { id: 'faq', label: 'FAQ' },
+];
+
+const full = [
+  { id: 'atelier', label: "L'atelier" },
+  { id: 'portfolio', label: 'Portfolio' },
+  { id: 'prestations', label: 'Prestations' },
+  { id: 'artiste', label: "L'artiste" },
+  { id: 'avis', label: 'Avis' },
+  { id: 'infos', label: 'Infos pratiques' },
+  { id: 'faq', label: 'Questions' },
+];
+---
+
+<header class="site-header" data-site-header data-tone="dark">
+  <div class="site-header__inner">
+    <a class="brand" href="/" data-cursor="link">
+      <svg class="brand__mark" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M32 9C32 9 15 30 15 41a17 17 0 0 0 34 0C49 30 32 9 32 9Z" fill="none" stroke="currentColor" stroke-width="3.2"></path>
+        <circle cx="32" cy="41" r="5" fill="var(--accent)"></circle>
+      </svg>
+      <span class="brand__name">THIERSINK</span>
+      <span class="sr-only">, retour à l'accueil</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Navigation principale">
+      <ul role="list" class="site-nav__list">
+        {
+          primary.map((item) => (
+            <li>
+              <a class="site-nav__link link link--quiet" href={`/#${item.id}`} data-spy={item.id}>
+                <span class="site-nav__dot" aria-hidden="true" />
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <BookingButton size="sm" class="site-header__cta" />
+      <button class="menu-toggle t-ui" type="button" aria-expanded="false" aria-controls="menu-mobile" data-menu-toggle>
+        <span>Menu</span>
+        <span class="menu-toggle__icon" aria-hidden="true"><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog class="menu" id="menu-mobile" aria-label="Menu" data-menu data-surface="dark">
+  <div class="menu__inner">
+    <div class="menu__top">
+      <span class="brand__name">THIERSINK</span>
+      <button class="menu-close t-ui" type="button" data-menu-close>
+        Fermer
+        <svg viewBox="0 0 14 14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M2 2l10 10M12 2L2 12"></path>
+        </svg>
+      </button>
+    </div>
+    <nav aria-label="Navigation du menu">
+      <ol role="list" class="menu__list">
+        {
+          full.map((item, i) => (
+            <li style={`--i:${i}`}>
+              <a class="menu__link" href={`/#${item.id}`} data-menu-link>
+                <span class="menu__index t-caption">{String(i + 1).padStart(2, '0')}</span>
+                <span class="menu__label">{item.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+    <div class="menu__foot">
+      <BookingButton />
+      <div class="menu__contact t-ui">
+        <a class="link" href={site.phone.href}>{site.phone.display}</a>
+        <a class="link" href={site.social.instagram.url} target="_blank" rel="noopener noreferrer">
+          Instagram<span class="sr-only"> (nouvel onglet)</span><ExternalIcon />
+        </a>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<div class="booking-dock" data-booking-dock>
+  <BookingButton />
+</div>
+
+<script>
+  import '../scripts/nav';
+</script>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: var(--z-header);
+    color: var(--color-parchment);
+    transition:
+      transform 0.5s var(--ease-out-expo),
+      background-color var(--dur-base) var(--ease-editorial),
+      color var(--dur-base) var(--ease-editorial),
+      border-color var(--dur-base) var(--ease-editorial);
+    border-bottom: 1px solid transparent;
+  }
+
+  .site-header[data-scrolled] {
+    background: color-mix(in srgb, var(--color-soot) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom-color: var(--color-graphite);
+  }
+
+  .site-header[data-tone='light'] {
+    --accent: var(--color-rust);
+    --fg: var(--color-onyx-warm);
+    --bg: var(--color-parchment);
+    color: var(--color-onyx-warm);
+  }
+
+  .site-header[data-tone='light'][data-scrolled] {
+    background: color-mix(in srgb, var(--color-parchment) 90%, transparent);
+    border-bottom-color: var(--color-warm-stone);
+  }
+
+  .site-header[data-hidden] {
+    transform: translateY(-100%);
+  }
+
+  .site-header__inner {
+    width: var(--container);
+    margin-inline: auto;
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    min-height: 44px;
+  }
+
+  .brand__mark {
+    width: 22px;
+    height: 22px;
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+
+  .brand:hover .brand__mark {
+    transform: rotate(-12deg) translateY(-1px);
+  }
+
+  .brand__name {
+    font-family: var(--font-sans);
+    font-weight: var(--font-weight-bold);
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+
+  .site-nav {
+    margin-left: auto;
+  }
+
+  .site-nav__list {
+    display: flex;
+    gap: clamp(16px, 2vw, 32px);
+  }
+
+  .site-nav__link {
+    position: relative;
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .site-nav__dot {
+    position: absolute;
+    left: -11px;
+    top: 50%;
+    width: 5px;
+    height: 5px;
+    margin-top: -2.5px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: scale(0);
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+
+  .site-nav__link[aria-current='location'] .site-nav__dot {
+    transform: scale(1);
+  }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .menu-toggle {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 0 4px;
+    background: none;
+    border: 0;
+  }
+
+  .menu-toggle__icon {
+    display: grid;
+    gap: 5px;
+    width: 22px;
+  }
+
+  .menu-toggle__icon span {
+    height: 1px;
+    background: currentColor;
+    transition: transform var(--dur-base) var(--ease-editorial);
+    transform-origin: 100% 50%;
+  }
+
+  .menu-toggle:hover .menu-toggle__icon span:last-child {
+    transform: scaleX(0.6);
+  }
+
+  @media (max-width: 1100px) {
+    .site-nav {
+      display: none;
+    }
+    .site-header__actions {
+      margin-left: auto;
+    }
+    .menu-toggle {
+      display: inline-flex;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .site-header__actions :global(.site-header__cta) {
+      display: none;
+    }
+  }
+
+  /* Sans JavaScript : liens visibles directement, pas de menu modal. */
+  :global(html:not(.js)) .menu-toggle {
+    display: none;
+  }
+
+  @media (max-width: 1100px) {
+    :global(html:not(.js)) .site-nav {
+      display: block;
+      overflow-x: auto;
+    }
+    :global(html:not(.js)) .site-nav__list {
+      gap: 14px;
+    }
+  }
+
+  /* Menu mobile ------------------------------------------------------------ */
+  .menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--color-soot);
+    color: var(--color-parchment);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .menu::backdrop {
+    background: transparent;
+  }
+
+  .menu[open] {
+    animation: menu-in 0.6s var(--ease-out-expo) both;
+  }
+
+  .menu[data-closing] {
+    animation: menu-out 0.35s var(--ease-in-out) both;
+  }
+
+  @keyframes menu-in {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes menu-out {
+    from {
+      clip-path: inset(0 0 0 0);
+    }
+    to {
+      clip-path: inset(0 0 100% 0);
+    }
+  }
+
+  .menu__inner {
+    width: var(--container);
+    margin-inline: auto;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 32px;
+  }
+
+  .menu__top {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-graphite);
+  }
+
+  .menu-close {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    background: none;
+    border: 0;
+  }
+
+  .menu-close svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .menu__list {
+    padding-block: 24px;
+  }
+
+  .menu__list li {
+    border-bottom: 1px solid var(--color-graphite);
+  }
+
+  .menu__link {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding-block: 14px;
+    text-decoration: none;
+  }
+
+  .menu__index {
+    color: var(--color-saffron-glow);
+    min-width: 2ch;
+  }
+
+  .menu__label {
+    font-family: var(--font-serif);
+    font-weight: var(--font-weight-light);
+    text-transform: uppercase;
+    font-size: clamp(2rem, 9vw, 3.5rem);
+    line-height: 0.9;
+    letter-spacing: var(--tracking-display-em);
+    transition: transform var(--dur-base) var(--ease-editorial);
+  }
+
+  .menu__link:hover .menu__label,
+  .menu__link:focus-visible .menu__label {
+    transform: translateX(8px);
+  }
+
+  .menu[open] .menu__list li {
+    animation: menu-item 0.8s var(--ease-out-expo) both;
+    animation-delay: calc(0.15s + var(--i) * 0.05s);
+  }
+
+  @keyframes menu-item {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+
+  .menu__foot {
+    margin-top: auto;
+    display: grid;
+    gap: 20px;
+    justify-items: start;
+  }
+
+  .menu__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    color: var(--color-walnut);
+  }
+
+  /* Bouton de réservation flottant (mobile) -------------------------------- */
+  .booking-dock {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: var(--z-header);
+    display: none;
+    transform: translateY(calc(100% + 32px));
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+
+  .booking-dock :global(.btn) {
+    width: 100%;
+    background: var(--color-soot);
+    color: var(--color-parchment);
+    border-color: var(--color-parchment);
+  }
+
+  .booking-dock[data-visible] {
+    transform: none;
+  }
+
+  @media (max-width: 720px) {
+    .booking-dock {
+      display: block;
+    }
+  }
+</style>

@@ -1,0 +1,549 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import SplitHeading from './SplitHeading.astro';
+import { site, isExternalBooking, bookingHref } from '../config/site';
+import { LIMITS, REQUEST_TYPES, SIZES, ACCEPTED_IMAGE_TYPES } from '../lib/booking/validate';
+---
+
+<section class="booking section grain" id="rendez-vous" data-surface="dark" aria-labelledby="rendez-vous-title">
+  <div class="container booking__grid">
+    <div class="booking__head">
+      <SectionHeader index="09" label="Rendez-vous" aside="En ligne ou par téléphone" />
+    </div>
+
+    <div class="booking__intro">
+      <SplitHeading id="rendez-vous-title" class="t-display" lines={['Prendre', 'rendez-vous']} />
+      <div class="prose" data-reveal="fade">
+        <p class="t-body-lg">Décrivez votre projet : le salon vous répond pour convenir d'un rendez-vous.</p>
+        <p class="t-muted">
+          Une demande envoyée depuis ce formulaire n'est pas une réservation ferme. Vous pouvez aussi appeler le salon.
+        </p>
+      </div>
+      {
+        isExternalBooking && (
+          <p data-reveal="fade">
+            <a class="link t-ui" href={bookingHref} target="_blank" rel="noopener noreferrer">
+              Réserver en ligne sur Planity<span class="sr-only"> (nouvel onglet)</span>
+            </a>
+          </p>
+        )
+      }
+      <dl class="booking__contact" data-reveal="fade" style="--i:1">
+        <div>
+          <dt class="t-caption">Téléphone</dt>
+          <dd><a class="link" href={site.phone.href}>{site.phone.display}</a></dd>
+        </div>
+        <div>
+          <dt class="t-caption">E-mail</dt>
+          <dd><a class="link booking__mail" href={`mailto:${site.email}`}>{site.email}</a></dd>
+        </div>
+      </dl>
+    </div>
+
+    <form
+      class="form"
+      method="post"
+      action="/api/rendez-vous"
+      enctype="multipart/form-data"
+      data-booking-form
+      aria-describedby="form-required"
+    >
+      <p class="form__required t-caption" id="form-required">Les champs marqués d'un astérisque (*) sont obligatoires.</p>
+
+      <div class="form__row">
+        <div class="field">
+          <label for="f-nom">Nom <span aria-hidden="true">*</span></label>
+          <input id="f-nom" name="nom" type="text" autocomplete="name" required maxlength={LIMITS.name} aria-describedby="e-nom" />
+          <p class="field__error" id="e-nom" data-error-for="nom"></p>
+        </div>
+        <div class="field">
+          <label for="f-email">Adresse e-mail <span aria-hidden="true">*</span></label>
+          <input
+            id="f-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            inputmode="email"
+            required
+            maxlength={LIMITS.email}
+            aria-describedby="h-email e-email"
+          />
+          <p class="field__hint" id="h-email">Pour vous répondre. Exemple : nom@domaine.fr</p>
+          <p class="field__error" id="e-email" data-error-for="email"></p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-telephone">Téléphone</label>
+        <input
+          id="f-telephone"
+          name="telephone"
+          type="tel"
+          autocomplete="tel"
+          inputmode="tel"
+          maxlength={LIMITS.phone}
+          aria-describedby="h-telephone e-telephone"
+        />
+        <p class="field__hint" id="h-telephone">Facultatif, si vous préférez un rappel par téléphone.</p>
+        <p class="field__error" id="e-telephone" data-error-for="telephone"></p>
+      </div>
+
+      <fieldset class="field field--choices" aria-describedby="e-type">
+        <legend>Type de demande <span aria-hidden="true">*</span></legend>
+        <div class="choices">
+          {
+            Object.entries(REQUEST_TYPES).map(([value, label], i) => (
+              <label class="choice">
+                <input type="radio" name="type" value={value} required={i === 0} />
+                <span class="choice__box">{label}</span>
+              </label>
+            ))
+          }
+        </div>
+        <p class="field__error" id="e-type" data-error-for="type"></p>
+      </fieldset>
+
+      <div class="form__row" data-show-for="tatouage piercing">
+        <div class="field">
+          <label for="f-zone">Zone du corps</label>
+          <input id="f-zone" name="zone" type="text" maxlength={LIMITS.zone} aria-describedby="h-zone e-zone" />
+          <p class="field__hint" id="h-zone">Exemple : avant-bras, cheville, oreille.</p>
+          <p class="field__error" id="e-zone" data-error-for="zone"></p>
+        </div>
+        <div class="field" data-show-for="tatouage">
+          <label for="f-taille">Taille approximative</label>
+          <div class="select">
+            <select id="f-taille" name="taille" aria-describedby="e-taille">
+              <option value="">Choisir une taille</option>
+              {Object.entries(SIZES).map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <p class="field__error" id="e-taille" data-error-for="taille"></p>
+        </div>
+      </div>
+
+      <div class="field" data-show-for="tatouage">
+        <label for="f-style">Style souhaité</label>
+        <input id="f-style" name="style" type="text" maxlength={LIMITS.style} aria-describedby="h-style e-style" />
+        <p class="field__hint" id="h-style">Exemple : trait fin, ornemental, lettrage. Facultatif.</p>
+        <p class="field__error" id="e-style" data-error-for="style"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-message">Votre projet <span aria-hidden="true">*</span></label>
+        <textarea
+          id="f-message"
+          name="message"
+          rows="6"
+          required
+          minlength={LIMITS.messageMin}
+          maxlength={LIMITS.message}
+          aria-describedby="h-message e-message"></textarea>
+        <p class="field__hint" id="h-message">
+          Motif, idée, emplacement, contraintes éventuelles. {LIMITS.messageMin} caractères minimum.
+          <span class="field__count" data-count aria-hidden="true"></span>
+        </p>
+        <p class="field__error" id="e-message" data-error-for="message"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-reference">Image de référence</label>
+        <div class="file" data-file>
+          <input
+            id="f-reference"
+            name="reference"
+            type="file"
+            accept={ACCEPTED_IMAGE_TYPES.join(',')}
+            aria-describedby="h-reference e-reference"
+          />
+          <span class="file__ui" aria-hidden="true">
+            <span class="file__button t-ui">Choisir une image</span>
+            <span class="file__name" data-file-name>Aucun fichier choisi</span>
+          </span>
+        </div>
+        <p class="field__hint" id="h-reference">Facultatif. JPG, PNG, WebP ou HEIC, 5 Mo maximum.</p>
+        <p class="field__error" id="e-reference" data-error-for="reference"></p>
+      </div>
+
+      <!-- Champ piège : invisible pour les visiteurs, rempli par les robots. -->
+      <div class="form__trap" aria-hidden="true">
+        <label for="f-site">Ne pas remplir ce champ</label>
+        <input id="f-site" name="site_web" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <input type="hidden" name="t" value="" data-started />
+
+      <p class="form__privacy t-caption">
+        Les informations saisies servent uniquement à traiter votre demande. Elles sont transmises par e-mail au salon et ne
+        sont pas conservées sur le site. Détails dans la <a class="link" href="/confidentialite">politique de confidentialité</a>.
+      </p>
+
+      <div class="form__actions">
+        <button class="btn form__submit" type="submit" data-submit>
+          <span data-submit-label>Envoyer la demande</span>
+          <svg class="btn__arrow" viewBox="0 0 14 14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M1 7h11M8 3l4 4-4 4"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status></div>
+    </form>
+  </div>
+</section>
+
+<script>
+  import '../scripts/booking-form';
+</script>
+
+<style>
+  .booking {
+    position: relative;
+    z-index: 1;
+  }
+
+  .booking__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(32px, 4vw, 64px) var(--gap);
+    align-items: start;
+  }
+
+  .booking__head {
+    grid-column: 1 / -1;
+  }
+
+  .booking__intro {
+    grid-column: 1 / span 5;
+    display: grid;
+    gap: 28px;
+    position: sticky;
+    top: calc(var(--header-h) + 32px);
+  }
+
+  .booking__contact > div {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 12px;
+    padding-block: 14px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .booking__contact dt {
+    color: var(--fg-muted);
+    padding-top: 2px;
+  }
+
+  .booking__contact dd {
+    margin: 0;
+  }
+
+  .booking__mail {
+    overflow-wrap: anywhere;
+  }
+
+  .form {
+    grid-column: 7 / -1;
+    display: grid;
+    gap: 24px;
+  }
+
+  .form__required {
+    color: var(--fg-muted);
+  }
+
+  .form__row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px var(--gap);
+  }
+
+  .field {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    min-width: 0;
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .field label,
+  .field legend {
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-ui);
+    padding: 0;
+  }
+
+  .field legend {
+    margin-bottom: 8px;
+  }
+
+  .field input[type='text'],
+  .field input[type='email'],
+  .field input[type='tel'],
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--control-border);
+    border-radius: var(--radius-inputs);
+    background: var(--color-soot);
+    color: var(--fg);
+    font-size: 16px; /* évite le zoom automatique sur iOS */
+    line-height: 1.4;
+    transition: border-color var(--dur-base) var(--ease-editorial);
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 160px;
+  }
+
+  .field input:hover,
+  .field select:hover,
+  .field textarea:hover {
+    border-color: var(--color-parchment);
+  }
+
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--color-parchment);
+  }
+
+  .field [aria-invalid='true'] {
+    border-color: var(--accent);
+  }
+
+  .select {
+    position: relative;
+  }
+
+  .select select {
+    appearance: none;
+    padding-right: 40px;
+  }
+
+  .select::after {
+    content: '';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    margin-top: -6px;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+
+  .field__hint {
+    font-size: 13px;
+    color: var(--fg-muted);
+  }
+
+  .field__count {
+    margin-left: 6px;
+  }
+
+  .field__error {
+    font-size: 13px;
+    color: var(--accent);
+  }
+
+  .field__error:empty {
+    display: none;
+  }
+
+  .field__error::before {
+    content: '! ';
+    font-weight: var(--font-weight-bold);
+  }
+
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .choice {
+    position: relative;
+    text-transform: none !important;
+  }
+
+  .choice input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .choice__box {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 12px 18px;
+    border: 1px solid var(--control-border);
+    border-radius: var(--radius-buttons);
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    transition:
+      background-color var(--dur-base) var(--ease-editorial),
+      color var(--dur-base) var(--ease-editorial);
+  }
+
+  .choice__box::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    transition: background-color var(--dur-base) var(--ease-editorial);
+  }
+
+  .choice input:checked + .choice__box {
+    background: var(--color-parchment);
+    color: var(--color-soot);
+    border-color: var(--color-parchment);
+  }
+
+  .choice input:checked + .choice__box::before {
+    background: var(--color-saffron-glow);
+    border-color: var(--color-saffron-glow);
+  }
+
+  .choice input:focus-visible + .choice__box {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .choice:hover .choice__box {
+    border-color: var(--color-parchment);
+  }
+
+  .file {
+    position: relative;
+  }
+
+  .file input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .file__ui {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 48px;
+    padding: 6px;
+    border: 1px dashed var(--control-border);
+    border-radius: var(--radius-inputs);
+  }
+
+  .file__button {
+    padding: 10px 14px;
+    border: 1px solid var(--control-border);
+    border-radius: var(--radius-buttons);
+    white-space: nowrap;
+  }
+
+  .file__name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--fg-muted);
+    font-size: var(--fs-small);
+  }
+
+  .file:hover .file__ui,
+  .file input:focus-visible + .file__ui {
+    border-color: var(--color-parchment);
+  }
+
+  .file input:focus-visible + .file__ui {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .form__trap {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form__privacy {
+    color: var(--fg-muted);
+    text-transform: none;
+    font-size: 13px;
+    letter-spacing: 0;
+    max-width: 60ch;
+  }
+
+  .form__actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .form__submit[aria-busy='true'] {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .form__status {
+    padding: 0;
+  }
+
+  .form__status:not(:empty) {
+    padding: 18px 20px;
+    border: 1px solid var(--color-walnut);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-cards);
+  }
+
+  .form__status[data-tone='success'] {
+    border-left-color: var(--color-parchment);
+  }
+
+  .form__status:focus {
+    outline: none;
+  }
+
+  [data-show-for][hidden] {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .booking__intro,
+    .form {
+      grid-column: 1 / -1;
+    }
+    .booking__intro {
+      position: static;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .form__row {
+      grid-template-columns: 1fr;
+    }
+    .form__submit {
+      width: 100%;
+    }
+  }
+</style>

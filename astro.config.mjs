@@ -46,15 +46,26 @@ export default defineConfig({
     },
     {
       // Substitut de TT Ramillas Variable (licence commerciale non fournie) :
-      // Cormorant Garamond (SIL OFL), servi depuis node_modules.
-      provider: fontProviders.npm({ remote: false }),
+      // Cormorant Garamond (SIL OFL), fichiers du paquet @fontsource. Le sous-ensemble
+      // latin couvre tout le français (accents, œ, guillemets, tirets).
+      provider: fontProviders.local(),
       name: 'Cormorant Garamond',
       cssVariable: '--font-cormorant',
-      weights: [300],
-      styles: ['normal', 'italic'],
-      subsets: ['latin', 'latin-ext'],
       fallbacks: ['Georgia', 'serif'],
-      options: { package: '@fontsource/cormorant-garamond' },
+      options: {
+        variants: [
+          {
+            weight: 300,
+            style: 'normal',
+            src: ['./node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-300-normal.woff2'],
+          },
+          {
+            weight: 300,
+            style: 'italic',
+            src: ['./node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-300-italic.woff2'],
+          },
+        ],
+      },
     },
   ],
   env: {

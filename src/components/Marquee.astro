@@ -1,0 +1,188 @@
+---
+interface Props {
+  items: string[];
+  label: string;
+}
+
+const { items, label } = Astro.props;
+// Deux copies identiques : la piste défile de -50 % pour une boucle sans couture.
+const copies = [0, 1];
+---
+
+<div class="marquee grain" data-surface="dark" data-marquee>
+  <p class="sr-only">{label} : {items.join(', ')}.</p>
+  <div class="marquee__viewport" aria-hidden="true">
+    <div class="marquee__track" data-marquee-track>
+      {
+        copies.map(() => (
+          <div class="marquee__group">
+            {items.map((item) => (
+              <span class="marquee__item">
+                {item}
+                <span class="marquee__sep" />
+              </span>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <button class="marquee__pause" type="button" aria-pressed="false" data-marquee-pause>
+    <svg class="marquee__icon marquee__icon--pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 2h2v8H3zM7 2h2v8H7z"></path></svg>
+    <svg class="marquee__icon marquee__icon--play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 2l7 4-7 4z"></path></svg>
+    <span class="sr-only" data-marquee-label>Mettre en pause le bandeau</span>
+  </button>
+</div>
+
+<script>
+  import { getTier } from '../scripts/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((marquee) => {
+    const button = marquee.querySelector<HTMLButtonElement>('[data-marquee-pause]');
+    const label = marquee.querySelector('[data-marquee-label]');
+    const track = marquee.querySelector<HTMLElement>('[data-marquee-track]');
+    button?.addEventListener('click', () => {
+      const paused = !marquee.hasAttribute('data-paused');
+      marquee.toggleAttribute('data-paused', paused);
+      button.setAttribute('aria-pressed', String(paused));
+      if (label) label.textContent = paused ? 'Relancer le bandeau' : 'Mettre en pause le bandeau';
+    });
+
+    // Niveau full : le bandeau s'incline légèrement avec la vitesse de défilement.
+    if (!track) return;
+    let lastY = window.scrollY;
+    let skew = 0;
+    let raf = 0;
+    const step = () => {
+      const y = window.scrollY;
+      const velocity = y - lastY;
+      lastY = y;
+      skew += (Math.max(-6, Math.min(6, velocity * 0.12)) - skew) * 0.12;
+      track.style.setProperty('--skew', `${skew.toFixed(2)}deg`);
+      if (Math.abs(skew) > 0.02 || Math.abs(velocity) > 0) raf = requestAnimationFrame(step);
+      else {
+        raf = 0;
+        track.style.removeProperty('--skew');
+      }
+    };
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) window.addEventListener('scroll', onScroll, { passive: true });
+      else window.removeEventListener('scroll', onScroll);
+    });
+    const onScroll = () => {
+      if (getTier() !== 'full' || raf) return;
+      lastY = window.scrollY;
+      raf = requestAnimationFrame(step);
+    };
+    io.observe(marquee);
+  });
+</script>
+
+<style>
+  .marquee {
+    position: relative;
+    z-index: 1;
+    padding-block: clamp(28px, 4vw, 56px);
+    border-block: 1px solid var(--color-graphite);
+    overflow: hidden;
+  }
+
+  .marquee__viewport {
+    overflow: hidden;
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    transform: skewX(var(--skew, 0deg));
+  }
+
+  .marquee__group {
+    display: flex;
+    flex: none;
+  }
+
+  .marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding-right: 0.5em;
+    font-family: var(--font-serif);
+    font-weight: var(--font-weight-light);
+    font-size: clamp(3rem, 2rem + 5vw, 7.2rem);
+    line-height: 1;
+    letter-spacing: var(--tracking-display-em);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .marquee__item:nth-child(even) {
+    font-style: italic;
+    color: var(--fg-muted);
+  }
+
+  .marquee__sep {
+    width: 0.14em;
+    height: 0.14em;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+  }
+
+  :global(html[data-motion='full']) .marquee__group,
+  :global(html[data-motion='lite']) .marquee__group {
+    animation: marquee var(--marquee-duration) linear infinite;
+  }
+
+  .marquee[data-paused] .marquee__group,
+  .marquee:hover .marquee__group {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translate3d(-100%, 0, 0);
+    }
+  }
+
+  .marquee__pause {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 8px;
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--color-graphite);
+    border-radius: var(--radius-buttons);
+    background: var(--color-soot);
+    color: var(--fg-muted);
+    transition: color var(--dur-base) var(--ease-editorial), border-color var(--dur-base) var(--ease-editorial);
+  }
+
+  .marquee__pause:hover,
+  .marquee__pause:focus-visible {
+    color: var(--fg);
+    border-color: var(--fg-muted);
+  }
+
+  .marquee__icon {
+    width: 10px;
+    height: 10px;
+    fill: currentColor;
+  }
+
+  .marquee__icon--play,
+  .marquee[data-paused] .marquee__icon--pause {
+    display: none;
+  }
+
+  .marquee[data-paused] .marquee__icon--play {
+    display: block;
+  }
+
+  :global(html:not([data-motion='full']):not([data-motion='lite'])) .marquee__pause {
+    display: none;
+  }
+</style>

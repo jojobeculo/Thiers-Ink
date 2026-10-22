@@ -1,0 +1,262 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import SplitHeading from './SplitHeading.astro';
+import ExternalIcon from './ExternalIcon.astro';
+import { site, mapLinks } from '../config/site';
+
+const { lat, lng } = site.address.geo;
+const bbox = [lng - 0.0045, lat - 0.0025, lng + 0.0045, lat + 0.0025].map((n) => n.toFixed(6)).join(',');
+const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
+
+const routes = [
+  { label: 'Google Maps', href: mapLinks.google },
+  { label: 'OpenStreetMap', href: mapLinks.osm },
+  { label: 'Plans (Apple)', href: mapLinks.apple },
+];
+---
+
+<section class="practical section grain" id="infos" data-surface="charcoal" aria-labelledby="infos-title">
+  <div class="container">
+    <SectionHeader index="07" label="Infos pratiques" aside={`${site.address.postalCode} ${site.address.city}`} />
+
+    <div class="practical__grid">
+      <div class="practical__info">
+        <SplitHeading id="infos-title" class="t-heading-lg" lines={['Venir', "à l'atelier"]} />
+
+        <dl class="practical__list">
+          <div data-reveal="fade">
+            <dt class="t-caption">Adresse</dt>
+            <dd>
+              <address>
+                {site.name}<br />
+                {site.address.street}<br />
+                {site.address.postalCode} {site.address.city}
+              </address>
+              <ul class="practical__routes t-caption" role="list">
+                {
+                  routes.map((r) => (
+                    <li>
+                      <a class="link" href={r.href} target="_blank" rel="noopener noreferrer">
+                        {r.label}
+                        <span class="sr-only"> (itinéraire, nouvel onglet)</span>
+                        <ExternalIcon />
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </dd>
+          </div>
+          <div data-reveal="fade" style="--i:1">
+            <dt class="t-caption">Téléphone</dt>
+            <dd><a class="link" href={site.phone.href}>{site.phone.display}</a></dd>
+          </div>
+          <div data-reveal="fade" style="--i:2">
+            <dt class="t-caption">E-mail</dt>
+            <dd><a class="link practical__mail" href={`mailto:${site.email}`}>{site.email}</a></dd>
+          </div>
+          <div data-reveal="fade" style="--i:3">
+            <dt class="t-caption">Horaires</dt>
+            <dd>
+              {
+                site.hours.length > 0 ? (
+                  <ul role="list">
+                    {site.hours.map((h) => (
+                      <li>
+                        {h.days} : {h.hours}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Pour connaître les horaires d'ouverture, appelez le salon.</p>
+                )
+              }
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="map" data-map data-reveal="mask">
+        <div class="map__placeholder" data-map-placeholder>
+          <svg class="map__grid" viewBox="0 0 400 400" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="0.6">
+            <path d="M0 80h400M0 160h400M0 240h400M0 320h400M80 0v400M160 0v400M240 0v400M320 0v400"></path>
+            <circle cx="200" cy="200" r="70" stroke-dasharray="2 5"></circle>
+            <circle cx="200" cy="200" r="130"></circle>
+          </svg>
+          <span class="map__pin" aria-hidden="true"></span>
+          <p class="map__coords t-caption" aria-hidden="true">
+            {lat.toFixed(4)}° N — {lng.toFixed(4)}° E
+          </p>
+          <div class="map__consent">
+            <button class="link t-ui map__load" type="button" data-map-load>Afficher la carte</button>
+            <p class="t-caption t-muted">
+              La carte est chargée depuis openstreetmap.org, qui reçoit alors votre adresse IP.
+            </p>
+          </div>
+        </div>
+        <template data-map-template>
+          <iframe
+            class="map__frame"
+            title={`Carte : ${site.name}, ${site.address.street}, ${site.address.city}`}
+            src={embed}
+            loading="lazy"
+            referrerpolicy="no-referrer"></iframe>
+        </template>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-map]').forEach((map) => {
+    const button = map.querySelector<HTMLButtonElement>('[data-map-load]');
+    const template = map.querySelector<HTMLTemplateElement>('[data-map-template]');
+    button?.addEventListener('click', () => {
+      if (!template) return;
+      const frame = template.content.firstElementChild?.cloneNode(true) as HTMLIFrameElement | undefined;
+      if (!frame) return;
+      map.append(frame);
+      map.querySelector('[data-map-placeholder]')?.remove();
+      frame.focus();
+    });
+  });
+</script>
+
+<style>
+  .practical {
+    position: relative;
+    z-index: 1;
+  }
+
+  .practical__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(32px, 4vw, 64px) var(--gap);
+    align-items: start;
+  }
+
+  .practical__info {
+    grid-column: 1 / span 5;
+    display: grid;
+    gap: clamp(32px, 4vw, 56px);
+  }
+
+  .practical__list > div {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    gap: 12px;
+    padding-block: 18px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .practical__list dt {
+    color: var(--fg-muted);
+    padding-top: 3px;
+  }
+
+  .practical__list dd {
+    margin: 0;
+  }
+
+  .practical__list address {
+    font-style: normal;
+  }
+
+  .practical__routes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    margin-top: 12px;
+  }
+
+  .practical__mail {
+    overflow-wrap: anywhere;
+  }
+
+  .map {
+    grid-column: 7 / -1;
+    position: relative;
+    aspect-ratio: 1;
+    min-width: 0;
+    border: 1px solid var(--color-graphite);
+    background: var(--color-soot);
+    overflow: hidden;
+  }
+
+  .map__placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--color-graphite);
+  }
+
+  .map__grid {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .map__pin {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    margin: -6px 0 0 -6px;
+    border-radius: 50%;
+    background: var(--color-saffron-glow);
+    box-shadow: 0 0 0 8px rgb(212 150 83 / 0.18);
+  }
+
+  .map__coords {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    color: var(--color-walnut);
+  }
+
+  .map__consent {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    display: grid;
+    gap: 10px;
+    justify-items: start;
+  }
+
+  .map__load {
+    min-height: 44px;
+    border: 0;
+    background-color: transparent;
+    color: var(--color-parchment);
+  }
+
+  .map__frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    filter: grayscale(1) invert(0.9) contrast(0.9) brightness(0.95);
+  }
+
+  @media (max-width: 900px) {
+    .practical__info,
+    .map {
+      grid-column: 1 / -1;
+    }
+    .map {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .practical__list > div {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+</style>

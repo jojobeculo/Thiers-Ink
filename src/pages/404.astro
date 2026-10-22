@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config/site';
+---
+
+<BaseLayout title={`Page introuvable — ${site.name}`} description="Cette page n'existe pas ou a été déplacée." noindex>
+  <section class="nf grain" id="top" data-surface="dark" aria-labelledby="nf-title">
+    <div class="container nf__inner">
+      <p class="t-caption nf__meta"><span class="nf__dot" aria-hidden="true"></span>Erreur 404</p>
+      <h1 class="nf__title" id="nf-title">
+        <span class="nf__num" aria-hidden="true">404</span>
+        <span class="t-heading-sm nf__text">Cette page n'existe pas ou a été déplacée.</span>
+      </h1>
+      <ul class="nf__links t-ui" role="list">
+        <li><a class="link" href="/">Retour à l'accueil</a></li>
+        <li><a class="link" href="/#portfolio">Portfolio</a></li>
+        <li><a class="link" href="/#rendez-vous">Prendre rendez-vous</a></li>
+      </ul>
+    </div>
+    <svg class="nf__drop" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 9C32 9 15 30 15 41a17 17 0 0 0 34 0C49 30 32 9 32 9Z" fill="none" stroke="currentColor" stroke-width="0.5"></path>
+    </svg>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    align-items: end;
+    padding-top: calc(var(--header-h) + 48px);
+    padding-bottom: clamp(40px, 8vh, 96px);
+    overflow: hidden;
+  }
+
+  .nf__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 28px;
+  }
+
+  .nf__meta {
+    color: var(--fg-muted);
+  }
+
+  .nf__dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .nf__title {
+    display: grid;
+    gap: 20px;
+  }
+
+  .nf__num {
+    font-family: var(--font-serif);
+    font-weight: var(--font-weight-light);
+    font-size: clamp(8rem, 30vw, 26rem);
+    line-height: 0.75;
+    letter-spacing: -0.06em;
+  }
+
+  .nf__text {
+    max-width: 18ch;
+    display: block;
+    font-family: var(--font-serif);
+    font-weight: var(--font-weight-light);
+    text-transform: uppercase;
+  }
+
+  .nf__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .nf__drop {
+    position: absolute;
+    right: -6vw;
+    top: 8vh;
+    width: min(60vw, 720px);
+    height: auto;
+    color: var(--color-graphite);
+  }
+
+  :global(html[data-motion='full']) .nf__drop {
+    animation: drift 14s var(--ease-in-out) infinite alternate;
+  }
+
+  @keyframes drift {
+    to {
+      transform: translate3d(-2vw, 3vh, 0) rotate(-6deg);
+    }
+  }
+</style>

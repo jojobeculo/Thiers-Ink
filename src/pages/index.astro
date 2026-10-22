@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Atelier from '../components/Atelier.astro';
+import Marquee from '../components/Marquee.astro';
+import Portfolio from '../components/Portfolio.astro';
+import Services from '../components/Services.astro';
+import Artist from '../components/Artist.astro';
+import Reviews from '../components/Reviews.astro';
+import Instagram from '../components/Instagram.astro';
+import Practical from '../components/Practical.astro';
+import Faq from '../components/Faq.astro';
+import Booking from '../components/Booking.astro';
+import { site } from '../config/site';
+
+// Données structurées : uniquement des informations publiques vérifiées.
+// Ni horaires ni note moyenne tant qu'elles ne sont pas confirmées.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TattooParlor',
+  name: site.name,
+  alternateName: site.altName,
+  description: site.description,
+  telephone: '+33612800989',
+  email: site.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    postalCode: site.address.postalCode,
+    addressLocality: site.address.city,
+    addressRegion: site.address.region,
+    addressCountry: site.address.country,
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: site.address.geo.lat,
+    longitude: site.address.geo.lng,
+  },
+  sameAs: [site.social.facebook, site.social.instagram.url],
+  ...(Astro.site ? { url: Astro.site.href, image: new URL('/og-thiersink.jpg', Astro.site).href } : {}),
+};
+---
+
+<BaseLayout title={`${site.name} — Tatouage et piercing à Thiers (Puy-de-Dôme)`} jsonLd={jsonLd}>
+  <div class="hero-stack">
+    <Hero />
+    <Atelier />
+  </div>
+  <Marquee label="L'atelier" items={['Tatouage', 'Piercing', 'Thiers', 'Puy-de-Dôme', 'Rue des Docteurs-Dumas']} />
+  <Portfolio />
+  <Services />
+  <Artist />
+  <Reviews />
+  <Instagram />
+  <Practical />
+  <Faq />
+  <Booking />
+</BaseLayout>
