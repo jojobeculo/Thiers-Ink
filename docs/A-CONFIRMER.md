@@ -23,7 +23,7 @@ Recherche réalisée le 22 octobre 2026.
 | Téléphone | 06 12 80 09 89 | Ville de Thiers, Fresha, grandbio.fr | Concordant |
 | E-mail | anthoo_thiersink@icloud.com | Annuaire de la ville de Thiers | À confirmer |
 | Facebook | facebook.com/profile.php?id=100089193006424 | Annuaire de la ville de Thiers | Concordant |
-| Instagram | @anthoo22_thiersink | Résultats de recherche (bio reprenant l'adresse) | À confirmer (`site.social.instagram.confirmed`) |
+| Instagram | @anthoo22_thiersink | Résultats de recherche (bio reprenant l'adresse) | À confirmer : passer `site.social.instagram.confirmed` à `true` pour l'ajouter aux données structurées |
 
 Le siège déclaré de l'entreprise individuelle est à une autre adresse que le salon.
 Les mentions légales affichent l'adresse du salon : le propriétaire doit confirmer
@@ -52,7 +52,7 @@ que ce choix lui convient.
 | Détatouage | Listé seulement par Fresha, non affiché | Confirmer ou écarter. |
 | Horaires | Non affichés (Fresha et grandbio.fr divergent) | Renseigner `site.hours` dans `src/config/site.ts`. |
 | Accès PMR, stationnement | Mentionnés par la bio Instagram, non affichés | Confirmer avant d'ajouter. |
-| Textes de présentation | Rédigés à partir des sources publiques | Valider : `Atelier.astro`, `Artist.astro`, `services.ts`. |
+| Textes de présentation | Rédigés à partir des sources publiques | Valider : `Hero.astro`, `Atelier.astro`, `Artist.astro`, `Booking.astro`, `services.ts`, réponses publiées de `faq.ts` (notamment « le salon vous répond pour convenir d'un rendez-vous »). |
 | Réponses de FAQ en brouillon | Acompte, tarifs, mineurs, soins, paiement | Rédiger les réponses dans `src/data/faq.ts` puis retirer `draft: true`. Les brouillons ne s'affichent qu'en développement. |
 | Réservation Planity | Aucun profil trouvé | Si un profil officiel existe, renseigner `site.booking.planityUrl`. |
 

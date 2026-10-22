@@ -36,7 +36,8 @@ const jsonLd = {
     latitude: site.address.geo.lat,
     longitude: site.address.geo.lng,
   },
-  sameAs: [site.social.facebook, site.social.instagram.url],
+  // Instagram n'est déclaré qu'une fois confirmé par le propriétaire.
+  sameAs: [site.social.facebook, ...(site.social.instagram.confirmed ? [site.social.instagram.url] : [])],
   ...(Astro.site ? { url: Astro.site.href, image: new URL('/og-thiersink.jpg', Astro.site).href } : {}),
 };
 ---

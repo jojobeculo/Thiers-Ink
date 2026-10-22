@@ -159,6 +159,10 @@ SITE_URL=https://www.exemple.fr npm run build
 FORCE_HTTPS=true SMTP_HOST=… SMTP_USER=… SMTP_PASS=… npm start
 ```
 
+Derrière un proxy, `SITE_URL` est indispensable : Astro ne fait confiance aux en-têtes
+`X-Forwarded-*` que pour ce domaine. Sans lui, l'IP vue par le serveur est celle du proxy
+et la limite de 5 demandes par 15 minutes s'appliquerait à tous les visiteurs à la fois.
+
 Un hébergement purement statique peut servir `dist/client/`, mais le formulaire et la
 page `/demande` ont besoin du serveur. Pour Netlify ou Vercel, remplacer l'adaptateur
 `@astrojs/node` par l'adaptateur correspondant et reporter les en-têtes de `server.mjs`

@@ -20,7 +20,9 @@ interface Props {
 const { title, description = site.description, noindex = false, jsonLd } = Astro.props;
 
 // Sans domaine définitif (SITE_URL), aucune URL absolue n'est inventée.
-const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+// Au build (format « file »), les chemins finissent par .html : on publie l'URL propre.
+const cleanPath = Astro.url.pathname.replace(/(?:\/index)?\.html$/, '') || '/';
+const canonical = Astro.site && !noindex ? new URL(cleanPath, Astro.site).href : undefined;
 const ogImage = Astro.site ? new URL('/og-thiersink.jpg', Astro.site).href : undefined;
 ---
 
