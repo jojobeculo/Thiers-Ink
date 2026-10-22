@@ -105,7 +105,8 @@ est libéré à la destruction.
 ## Formulaire de rendez-vous
 
 L'action principale « Prendre rendez-vous » (bouton plein, présent dans le hero, l'en-tête,
-chaque section clé, le bandeau d'appel, le pied de page et le bouton flottant mobile) mène
+le bandeau des points forts, chaque section clé, les bandeaux d'appel, le pied de page et
+le bouton flottant, sur mobile comme sur ordinateur) mène
 au formulaire (`#rendez-vous`), ou à Planity si `site.booking.planityUrl` est renseigné
 (aucun profil officiel trouvé à ce jour). « Appeler le salon » est l'action secondaire.
 
@@ -118,6 +119,10 @@ au formulaire (`#rendez-vous`), ou à Planity si `site.booking.planityUrl` est r
 - Sans configuration SMTP, l'API répond 503 et le site invite à appeler le salon :
   aucun faux message de succès.
 - Sans JavaScript, le formulaire s'envoie normalement et `/demande` affiche l'issue.
+- Hébergement sans serveur (`PUBLIC_STATIC_PREVIEW=true`, aperçu GitHub Pages) : après
+  la même validation, la demande est préparée dans la messagerie du visiteur
+  (`mailto:` avec objet et texte pré-remplis), qui l'envoie lui-même. Le site l'annonce
+  avant et après l'envoi, et rappelle de joindre l'image de référence.
 
 ## Consentement et GA4
 
@@ -140,17 +145,21 @@ l'approche de l'écran et ses rues se tracent ; sinon l'image reste statique.
 Référencement local « tatouage / piercing à Thiers » :
 
 - titres et descriptions orientés recherche locale sur chaque page ;
-- pages dédiées **/tatouage-thiers** et **/piercing-thiers** (contenu propre, fil d'Ariane,
+- pages dédiées **/tatoueur-thiers** et **/piercing-thiers** (contenu propre, fil d'Ariane,
   FAQ, liens internes depuis l'accueil, le menu et le pied de page) ;
 - données structurées (`src/lib/seo.ts`) : `TattooParlor` (adresse, coordonnées, horaires,
   zone desservie, prestations, carte, fondateur), `WebSite`, `Service`, `BreadcrumbList`,
   `FAQPage` — aucune note ni aucun avis inventé ;
 - balises `geo.*`, `robots` avec `max-image-preview:large`, Open Graph, `lang="fr"`, un seul
   `h1` par page, sitemap avec date de mise à jour, `robots.txt`, page 404 ;
+- questions de FAQ calquées sur les recherches (« Où trouver un tatoueur à Thiers ? »,
+  « Où faire un piercing à Thiers ? », horaires), publiées en `FAQPage` ;
+- vérification Google Search Console par balise meta (`PUBLIC_GOOGLE_SITE_VERIFICATION`) ;
 - l'URL canonique, les URL absolues et le sitemap n'existent qu'avec `SITE_URL`.
 
-Le premier levier local reste la **fiche Google Business Profile** du salon : nom,
-adresse et téléphone doivent y être identiques à ceux du site.
+Le premier levier local reste la **fiche Google Business Profile** du salon
+(« Thiersink - tatouage-piercing », déjà en ligne) : nom, adresse, téléphone et horaires
+doivent y être identiques à ceux du site, et l'adresse du site doit y figurer.
 
 ## Sécurité
 
@@ -170,7 +179,8 @@ Voir [`.env.example`](.env.example).
 |---|---|---|
 | `SITE_URL` | build | Domaine définitif (canonique, Open Graph, sitemap) et domaine de confiance pour `X-Forwarded-*`. |
 | `BASE_PATH` | build | Sous-chemin de déploiement (ex. `/Thiers-Ink` sur GitHub Pages). Vide à la racine. |
-| `PUBLIC_STATIC_PREVIEW` | build | `true` sur un hébergement sans serveur : avis sur le formulaire. |
+| `PUBLIC_STATIC_PREVIEW` | build | `true` sur un hébergement sans serveur : la demande est préparée dans la messagerie du visiteur. |
+| `PUBLIC_GOOGLE_SITE_VERIFICATION` | build | Code de vérification Google Search Console (balise meta). Facultatif. |
 | `PUBLIC_GA_MEASUREMENT_ID` | build | Identifiant GA4 (`G-…`). Facultatif. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` | exécution | Serveur d'envoi des demandes. |
 | `BOOKING_TO`, `BOOKING_FROM` | exécution | Destinataire (défaut : e-mail du salon) et expéditeur. |
@@ -195,8 +205,8 @@ et la limite de 5 demandes par 15 minutes s'appliquerait à tous les visiteurs �
 Le workflow `.github/workflows/astro.yml` publie un aperçu statique sur
 https://jojobeculo.github.io/Thiers-Ink/ à chaque push sur la branche. Il construit le
 site avec `SITE_URL`, `BASE_PATH=/Thiers-Ink` et `PUBLIC_STATIC_PREVIEW=true`, puis
-publie `dist/client/`. GitHub Pages n'exécute pas de serveur : le formulaire y affiche
-que l'envoi en ligne n'est pas actif et renvoie vers le téléphone. Tous les liens
+publie `dist/client/`. GitHub Pages n'exécute pas de serveur : le formulaire y prépare
+la demande dans la messagerie du visiteur (voir « Formulaire »). Tous les liens
 internes passent par `withBase()` (`src/config/site.ts`) pour suivre le sous-chemin.
 
 Un hébergement purement statique peut servir `dist/client/`, mais le formulaire et la
@@ -232,6 +242,13 @@ Sur le build de production, avec Chromium (Playwright) :
 - Lighthouse 12 sur le serveur local (débit simulé) : mobile 99 / 100 / 100 / 100 et
   ordinateur 100 / 100 / 100 / 100 (performance, accessibilité, bonnes pratiques, SEO),
   CLS 0. À mesurer de nouveau sur l'hébergement réel.
+- Build GitHub Pages (sous-chemin `/Thiers-Ink`, servi sans compression) : 320 px, iPhone 13,
+  Pixel 7, iPad, 1024, 1440 et 1920 px sur toutes les pages : aucun défilement horizontal,
+  aucun titre qui déborde de sa colonne, aucune animation bloquée, aucune erreur JavaScript,
+  cibles tactiles d'au moins 24 px ; formulaire : erreurs affichées puis brouillon
+  d'e-mail pré-rempli ; Lighthouse accueil, `/tatoueur-thiers`, `/piercing-thiers` :
+  mobile 93 à 99 et ordinateur 100 en performance, 100 en accessibilité, bonnes pratiques
+  et SEO, CLS 0.
 
 ## Licences des polices
 

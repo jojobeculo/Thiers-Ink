@@ -4,6 +4,7 @@ import '../styles/global.css';
 import { site, withBase } from '../config/site';
 import { MOTION_TIER_SCRIPT } from '../scripts/motion-tier.inline.mjs';
 import { businessJsonLd, websiteJsonLd } from '../lib/seo';
+import { PUBLIC_GOOGLE_SITE_VERIFICATION } from 'astro:env/client';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import ConsentBanner from '../components/ConsentBanner.astro';
@@ -42,6 +43,7 @@ const ogImage = Astro.site ? new URL(withBase('/og-thiersink.jpg'), Astro.site).
     <meta name="theme-color" content="#100f0e" />
     <meta name="color-scheme" content="dark" />
     <meta name="format-detection" content="telephone=no" />
+    {PUBLIC_GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={PUBLIC_GOOGLE_SITE_VERIFICATION} />}
     <meta name="geo.region" content="FR-63" />
     <meta name="geo.placename" content={site.address.city} />
     <meta name="geo.position" content={`${site.address.geo.lat};${site.address.geo.lng}`} />

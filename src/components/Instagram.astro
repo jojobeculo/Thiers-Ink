@@ -1,5 +1,6 @@
 ---
 import ExternalIcon from './ExternalIcon.astro';
+import BookingButton from './BookingButton.astro';
 import { site } from '../config/site';
 
 const handle = site.social.instagram.handle;
@@ -21,6 +22,10 @@ const handle = site.social.instagram.handle;
         <ExternalIcon />
       </span>
     </a>
+    <div class="insta__actions" data-reveal="fade">
+      <p class="t-muted">Un motif repéré sur Instagram ? Joignez-le à votre demande.</p>
+      <BookingButton />
+    </div>
   </div>
 </section>
 
@@ -61,6 +66,14 @@ const handle = site.social.instagram.handle;
     justify-self: start;
     padding-bottom: 4px;
     background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+  }
+
+  .insta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 28px;
+    margin-top: clamp(32px, 4vw, 48px);
   }
 
   .insta__link:hover :global(.ext-icon) {

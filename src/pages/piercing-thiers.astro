@@ -8,9 +8,14 @@ import { site } from '../config/site';
   path="/piercing-thiers"
   name="Piercing"
   title={`Piercing à Thiers (63) — oreille, nez, corps | ${site.name}`}
-  description={`Piercing à Thiers (Puy-de-Dôme) au salon ${site.name}, 43 rue des Docteurs-Dumas : piercing d'oreille, de nez et piercing corporel. Rendez-vous en ligne ou au ${site.phone.display}.`}
+  description={`Piercing à Thiers (63) chez ${site.name}, 43 rue des Docteurs-Dumas : oreille, nez et piercing corporel. Rendez-vous en ligne ou au ${site.phone.display}.`}
   heading={['Piercing', 'à Thiers']}
-  lead={`${site.name} réalise des piercings au ${site.address.street}, à ${site.address.city} (Puy-de-Dôme) : piercing de l’oreille, du nez et piercing corporel.`}
+  lead={`Vous cherchez où faire un piercing à ${site.address.city} ? ${site.name} réalise des piercings au ${site.address.street}, à ${site.address.city} (Puy-de-Dôme) : piercing de l’oreille, du nez et piercing corporel.`}
+  aboutHeading={['Votre piercing', 'à Thiers']}
+  about={[
+    `Piercing de l'oreille, du nez ou piercing corporel : ${site.name} réalise vos piercings au ${site.address.street}, à ${site.address.city}.`,
+    'Pour une première fois comme pour compléter vos piercings, indiquez la zone souhaitée et posez vos questions : le salon vous répond pour convenir d’un rendez-vous.',
+  ]}
   items={['Oreille', 'Nez', 'Corps']}
   steps={[
     {
@@ -40,8 +45,8 @@ import { site } from '../config/site';
       text: 'Le rendez-vous est le bon moment pour poser toutes les questions sur le piercing envisagé.',
     },
   ]}
-  faqIds={['rendez-vous', 'reference', 'adresse']}
+  faqIds={['piercing-thiers', 'rendez-vous', 'reference', 'horaires', 'adresse']}
   image={dotwork}
-  imageAlt="Visuel provisoire : mandala en pointillé beige sur fond noir."
-  related={{ label: 'Tatouage à Thiers', path: '/tatouage-thiers' }}
+  imageAlt="Visuel provisoire pour la page piercing à Thiers : mandala en pointillé beige sur fond noir."
+  related={{ label: 'Tatoueur à Thiers', path: '/tatoueur-thiers' }}
 />

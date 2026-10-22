@@ -52,9 +52,9 @@ que ce choix lui convient.
 | Détatouage | Listé seulement par Fresha, non affiché | Confirmer ou écarter. |
 | Horaires | Affichés comme indicatifs : mardi–samedi 9 h–12 h et 14 h–18 h, fermé dimanche et lundi (fiche Fresha, seule source détaillée ; Bottin et grandbio n'en donnent pas) | Confirmer ou corriger `site.hours` et `site.openingHours` dans `src/config/site.ts` (aussi utilisés par les données structurées). |
 | Zone desservie | Thiers, Courpière, Lezoux, Puy-Guillaume, Peschadoires, Vichy, Clermont-Ferrand | Valider `site.areaServed` (référencement local). |
-| Pages de prestation | `/tatouage-thiers`, `/piercing-thiers` : déroulé d'une demande et conseils génériques | Relire et valider le texte (`src/pages/*-thiers.astro`). |
+| Pages de prestation | `/tatoueur-thiers`, `/piercing-thiers` : déroulé d'une demande et conseils génériques | Relire et valider le texte (`src/pages/*-thiers.astro`). |
 | Accès PMR, stationnement | Mentionnés par la bio Instagram, non affichés | Confirmer avant d'ajouter. |
-| Textes de présentation | Rédigés à partir des sources publiques | Valider : `Hero.astro`, `Atelier.astro`, `Artist.astro`, `Booking.astro`, `services.ts`, réponses publiées de `faq.ts` (notamment « le salon vous répond pour convenir d'un rendez-vous »). |
+| Textes de présentation | Rédigés à partir des sources publiques | Valider : `Hero.astro`, `Atelier.astro`, `Highlights.astro` (points forts), `Artist.astro`, `Booking.astro`, `CtaBand.astro`, `services.ts`, réponses publiées de `faq.ts` (notamment « Où trouver un tatoueur à Thiers ? », « Où faire un piercing à Thiers ? », « Quels sont les horaires ? » et « le salon vous répond pour convenir d'un rendez-vous »). |
 | Réponses de FAQ en brouillon | Acompte, tarifs, mineurs, soins, paiement | Rédiger les réponses dans `src/data/faq.ts` puis retirer `draft: true`. Les brouillons ne s'affichent qu'en développement. |
 | Réservation Planity | Aucun profil trouvé | Si un profil officiel existe, renseigner `site.booking.planityUrl`. |
 
@@ -80,11 +80,28 @@ visible.
 
 ## 7. Avis clients
 
-Aucun avis n'est reproduit. Huit avis sont visibles sur l'annuaire grandbio.fr
-(probablement repris de Google) : ils ne sont pas utilisés, car leur texte exact n'a
-pas pu être vérifié à la source. Pour en afficher, copier le texte intégral depuis
-Google ou Facebook, avec l'accord de l'auteur, dans `src/data/reviews.ts`. Aucune note
-moyenne ne doit être ajoutée aux données structurées.
+Aucun avis n'est reproduit. La fiche Google du salon (« Thiersink - tatouage-piercing »,
+43 Rue des Docteurs Dumas) affichait le 22/10/2026 une note de 5/5 pour 168 avis.
+
+Afficher ces avis sur le site, dans une fenêtre défilante, demande un accès que seul le
+salon peut ouvrir :
+
+- **API Google Places** (clé d'API sur un compte Google Cloud du salon) : la note, le
+  nombre d'avis et **5 avis au maximum**, choisis par Google. Les conditions de Google
+  Maps Platform encadrent strictement la conservation de ces données : elles doivent
+  être récupérées à nouveau régulièrement (serveur, ou reconstruction quotidienne).
+- **API Google Business Profile** (connexion du propriétaire de la fiche, accès à
+  demander à Google) : tous les avis.
+- **Widget d'un prestataire** (Elfsight, Trustindex…) : tous les avis, mais un script
+  tiers et des cookies à soumettre au consentement, à ajouter à la CSP et à la page
+  Confidentialité.
+
+Recopier les avis à la main ou les extraire automatiquement de Google Maps est exclu :
+c'est contraire aux conditions de Google, et un avis supprimé ou modifié par son auteur
+resterait affiché. Le Code de la consommation (art. L111-7-2) impose aussi d'indiquer
+comment les avis affichés sont collectés et triés. Aucune note moyenne ne doit être
+ajoutée aux données structurées (Google ignore les avis déclarés par l'établissement
+lui-même).
 
 ## 8. Mise en ligne
 
@@ -92,7 +109,11 @@ moyenne ne doit être ajoutée aux données structurées.
 - Configuration SMTP : sans elle, le formulaire répond honnêtement que l'envoi est
   indisponible et invite à appeler le salon.
 - `PUBLIC_GA_MEASUREMENT_ID` : seulement si la mesure d'audience est souhaitée.
+- `PUBLIC_GOOGLE_SITE_VERIFICATION` : code de la balise meta Google Search Console, puis
+  envoyer `sitemap-index.xml` dans Search Console.
 - HTTPS : à activer chez l'hébergeur, puis `FORCE_HTTPS=true`.
 - Faire relire les pages légales : leur présence ne garantit pas la conformité.
-- Créer ou vérifier la fiche Google Business Profile (nom, adresse, téléphone, horaires
-  identiques au site) : c'est le premier levier du référencement local.
+- Fiche Google Business Profile (« Thiersink - tatouage-piercing », déjà en ligne) :
+  vérifier que nom, adresse, téléphone et horaires sont identiques au site, y ajouter
+  l'adresse du site, des photos récentes et répondre aux avis. C'est le premier levier
+  du référencement local.

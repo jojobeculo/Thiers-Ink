@@ -131,6 +131,12 @@ const [firstName, ...rest] = site.owner.name.split(' ');
     display: grid;
     gap: 24px;
     justify-items: start;
+    container-type: inline-size;
+  }
+
+  /* le nom tient dans sa colonne, même vers 900 px */
+  .artist__text :global(h2) {
+    font-size: min(var(--fs-display), 20cqi);
   }
 
   .artist__role {

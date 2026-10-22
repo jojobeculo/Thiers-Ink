@@ -49,7 +49,8 @@ export default defineConfig({
         "font-src 'self'",
         "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
         "base-uri 'self'",
-        "form-action 'self'",
+        // mailto: : sur l'aperçu sans serveur, le formulaire prépare un e-mail
+        "form-action 'self' mailto:",
         "object-src 'none'",
       ],
       scriptDirective: {
@@ -104,6 +105,8 @@ export default defineConfig({
     schema: {
       // Hébergement sans serveur (aperçu GitHub Pages) : le formulaire ne peut pas envoyer.
       PUBLIC_STATIC_PREVIEW: envField.boolean({ context: 'client', access: 'public', default: false }),
+      // Validation de la propriété dans Google Search Console (balise meta).
+      PUBLIC_GOOGLE_SITE_VERIFICATION: envField.string({ context: 'client', access: 'public', optional: true }),
       PUBLIC_GA_MEASUREMENT_ID: envField.string({
         context: 'client',
         access: 'public',

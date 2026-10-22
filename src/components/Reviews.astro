@@ -3,6 +3,7 @@ import SectionHeader from './SectionHeader.astro';
 import SplitHeading from './SplitHeading.astro';
 import ExternalIcon from './ExternalIcon.astro';
 import { reviews } from '../data/reviews';
+import BookingButton from './BookingButton.astro';
 import { site, mapLinks } from '../config/site';
 
 const sources = [
@@ -67,6 +68,10 @@ const sources = [
         ))
       }
     </ul>
+    <div class="reviews__cta" data-reveal="fade">
+      <p class="reviews__cta-text">Votre projet sera le prochain : décrivez-le en quelques lignes.</p>
+      <BookingButton size="lg" />
+    </div>
   </div>
 </section>
 
@@ -91,6 +96,21 @@ const sources = [
   .reviews__intro {
     grid-column: 8 / -1;
     max-width: 30ch;
+  }
+
+  .reviews__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px 32px;
+    margin-top: clamp(40px, 5vw, 72px);
+  }
+
+  .reviews__cta-text {
+    font-size: var(--fs-body-lg);
+    line-height: var(--leading-body-lg);
+    max-width: 32ch;
   }
 
   .reviews__sources {

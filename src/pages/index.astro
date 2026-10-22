@@ -12,6 +12,7 @@ import Practical from '../components/Practical.astro';
 import Faq from '../components/Faq.astro';
 import Booking from '../components/Booking.astro';
 import CtaBand from '../components/CtaBand.astro';
+import Highlights from '../components/Highlights.astro';
 import { site } from '../config/site';
 import { faqJsonLd } from '../lib/seo';
 import { publishedFaq } from '../data/faq';
@@ -20,12 +21,13 @@ import { publishedFaq } from '../data/faq';
 const jsonLd = [faqJsonLd(publishedFaq.filter((f) => !f.draft))];
 ---
 
-<BaseLayout title={`Salon de tatouage et piercing à Thiers (63) | ${site.name}`} jsonLd={jsonLd}>
+<BaseLayout title={`Tatoueur et piercing à Thiers (63) | ${site.name}, salon de tatouage`} jsonLd={jsonLd}>
   <div class="hero-stack">
     <Hero />
     <Atelier />
   </div>
-  <Marquee label="L'atelier" items={['Tatouage', 'Piercing', 'Thiers', 'Puy-de-Dôme', 'Rue des Docteurs-Dumas']} />
+  <Highlights />
+  <Marquee label="L'atelier" items={['Tatoueur', 'Piercing', 'Thiers', 'Puy-de-Dôme', 'Rue des Docteurs-Dumas']} />
   <Portfolio />
   <CtaBand
     id="cta-projet"

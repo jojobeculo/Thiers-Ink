@@ -154,7 +154,7 @@
   --font-sans: var(--font-satoshi, ui-sans-serif, system-ui, sans-serif);
 
   /* Titres serif (référence : 22 → 115 px), bornés pour les écrans étroits. */
-  --fs-display: clamp(3.25rem, 1.6rem + 7.4vw, var(--text-display)); /* 52 → 115 */
+  --fs-display: clamp(2.75rem, 1.2rem + 7.8vw, var(--text-display)); /* 44 → 115 : « rendez-vous » tient à 320 px */
   --fs-heading-lg: clamp(2.75rem, 1.7rem + 4.4vw, var(--text-heading-lg)); /* 44 → 69 */
   --fs-heading: clamp(2.5rem, 1.6rem + 3.9vw, var(--text-heading)); /* 40 → 65 */
   --fs-heading-sm: clamp(2.125rem, 1.5rem + 2.6vw, var(--text-heading-sm)); /* 34 → 50 */

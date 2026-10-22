@@ -1,0 +1,175 @@
+---
+import BookingButton from './BookingButton.astro';
+import { site, withBase } from '../config/site';
+
+// Uniquement des faits vérifiables (prestations, adresse, horaires indicatifs, contact).
+const items = [
+  {
+    title: 'Tatouage & piercing',
+    text: `Les deux au même endroit, au ${site.address.street} à ${site.address.city}.`,
+    href: withBase('/tatoueur-thiers'),
+    link: 'Tatoueur à Thiers',
+    icon: 'M24 6c0 0-11 13-11 21a11 11 0 0 0 22 0C35 19 24 6 24 6Z M19 29a5 5 0 0 0 5 5',
+  },
+  {
+    title: 'Du mardi au samedi',
+    text: '9 h – 12 h et 14 h – 18 h (horaires indicatifs, à confirmer par téléphone).',
+    href: withBase('/#infos'),
+    link: 'Infos pratiques',
+    icon: 'M24 8a16 16 0 1 0 0.01 0Z M24 14v10l7 5',
+  },
+  {
+    title: 'Demande en ligne',
+    text: 'Décrivez votre projet en quelques minutes, image de référence comprise.',
+    href: withBase('/#rendez-vous'),
+    link: 'Faire une demande',
+    icon: 'M12 8h18l6 6v26H12Z M30 8v6h6 M17 22h14 M17 28h14 M17 34h8',
+  },
+  {
+    title: 'Un appel suffit',
+    text: `${site.phone.display} : pour une question ou un rendez-vous.`,
+    href: site.phone.href,
+    link: 'Appeler le salon',
+    icon: 'M17 7l-5 1c-1.4.3-2.3 1.5-2.2 2.9.8 14 11 24.2 25 25 1.4.1 2.6-.8 2.9-2.2l1-5-7-3-3.3 3.6a20 20 0 0 1-11.5-11.5L20 14Z',
+  },
+];
+---
+
+<section class="highlights grain" data-surface="charcoal" aria-labelledby="atouts-title">
+  <div class="container">
+    <h2 class="sr-only" id="atouts-title">Le salon en bref</h2>
+    <ul class="highlights__list" role="list">
+      {
+        items.map((item, i) => (
+          <li class="highlight" data-reveal="fade" style={`--i:${i}`}>
+            <svg class="highlight__icon" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d={item.icon} pathLength="1" />
+            </svg>
+            <h3 class="highlight__title">{item.title}</h3>
+            <p class="highlight__text">{item.text}</p>
+            <a class="link t-caption highlight__link" href={item.href}>{item.link}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="highlights__cta" data-reveal="fade" style="--i:4">
+      <p class="highlights__cta-text">Votre projet mérite d'être bien préparé : parlons-en.</p>
+      <BookingButton size="lg" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .highlights {
+    position: relative;
+    z-index: 1;
+    padding-block: clamp(64px, 8vw, 112px);
+  }
+
+  .highlights__list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid var(--rule);
+  }
+
+  .highlight {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    padding: 32px 24px 32px 0;
+    border-right: 1px solid var(--rule);
+    padding-left: 24px;
+  }
+
+  .highlight:first-child {
+    padding-left: 0;
+  }
+
+  .highlight:last-child {
+    border-right: 0;
+  }
+
+  .highlight__icon {
+    width: 44px;
+    height: 44px;
+    color: var(--accent);
+  }
+
+  /* l'icône se dessine à l'apparition */
+  :global(html.js[data-motion='full']) .highlight__icon path,
+  :global(html.js[data-motion='lite']) .highlight__icon path {
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.6s var(--ease-out-expo);
+    transition-delay: calc(0.3s + var(--i, 0) * 0.12s);
+  }
+
+  :global(html.js[data-motion='full']) .highlight.is-in .highlight__icon path,
+  :global(html.js[data-motion='lite']) .highlight.is-in .highlight__icon path {
+    stroke-dashoffset: 0;
+  }
+
+  .highlight__title {
+    font-family: var(--font-serif);
+    font-weight: var(--font-weight-light);
+    font-size: var(--fs-subheading);
+    line-height: 1;
+    letter-spacing: var(--tracking-heading-em);
+    text-transform: uppercase;
+  }
+
+  .highlight__text {
+    color: var(--fg-muted);
+    max-width: 32ch;
+  }
+
+  .highlight__link {
+    justify-self: start;
+  }
+
+  .highlights__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px 32px;
+    margin-top: clamp(32px, 4vw, 56px);
+    padding-top: clamp(24px, 3vw, 40px);
+    border-top: 1px solid var(--rule);
+  }
+
+  .highlights__cta-text {
+    font-size: var(--fs-body-lg);
+    line-height: var(--leading-body-lg);
+    max-width: 30ch;
+  }
+
+  @media (max-width: 1000px) {
+    .highlights__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .highlight:nth-child(2) {
+      border-right: 0;
+    }
+    .highlight:nth-child(3) {
+      padding-left: 0;
+    }
+    .highlight:nth-child(n + 3) {
+      border-top: 1px solid var(--rule);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .highlights__list {
+      grid-template-columns: 1fr;
+    }
+    .highlight {
+      padding: 24px 0;
+      border-right: 0;
+      border-top: 1px solid var(--rule);
+    }
+    .highlight:first-child {
+      border-top: 0;
+    }
+  }
+</style>

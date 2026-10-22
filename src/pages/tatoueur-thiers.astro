@@ -5,12 +5,18 @@ import { site } from '../config/site';
 ---
 
 <ServiceLayout
-  path="/tatouage-thiers"
-  name="Tatouage"
-  title={`Tatouage à Thiers (63) — salon ${site.name}, rue des Docteurs-Dumas`}
-  description={`Salon de tatouage à Thiers (Puy-de-Dôme) : ${site.name}, 43 rue des Docteurs-Dumas. Décrivez votre projet (motif, emplacement, taille, style) et prenez rendez-vous en ligne ou au ${site.phone.display}.`}
-  heading={['Tatouage', 'à Thiers']}
-  lead={`${site.name} est un salon de tatouage situé au ${site.address.street}, à ${site.address.city} (Puy-de-Dôme). Chaque projet se prépare à partir de votre demande : le motif, son emplacement, la taille envisagée et le style recherché.`}
+  path="/tatoueur-thiers"
+  name="Tatoueur"
+  serviceType="Tatouage"
+  title={`Tatoueur à Thiers (63) — salon de tatouage ${site.name}`}
+  description={`Tatoueur à Thiers (63) : salon de tatouage ${site.name}, 43 rue des Docteurs-Dumas. Décrivez votre projet et prenez rendez-vous en ligne ou au ${site.phone.display}.`}
+  heading={['Tatoueur', 'à Thiers']}
+  lead={`Vous cherchez un tatoueur à ${site.address.city} ? ${site.name} est un salon de tatouage situé au ${site.address.street}, à ${site.address.city} (Puy-de-Dôme). Chaque projet se prépare à partir de votre demande : le motif, son emplacement, la taille envisagée et le style recherché.`}
+  aboutHeading={['Votre tatoueur', 'à Thiers']}
+  about={[
+    `${site.name} est le salon de tatouage et de piercing d'${site.owner.name}, installé au ${site.address.street}, à ${site.address.city}, dans le Puy-de-Dôme.`,
+    'Premier tatouage ou nouvelle pièce, petit motif ou projet plus grand : décrivez votre idée, joignez une image de référence si vous en avez une, et le salon vous répond pour en parler et fixer un rendez-vous.',
+  ]}
   items={['Projet personnel', 'Motif', 'Emplacement', 'Taille', 'Style']}
   steps={[
     {
@@ -44,8 +50,8 @@ import { site } from '../config/site';
       text: 'Une date importante, une première fois, une question particulière : notez-le dans votre message.',
     },
   ]}
-  faqIds={['rendez-vous', 'preparer', 'reference', 'adresse', 'realisations']}
+  faqIds={['tatoueur-thiers', 'rendez-vous', 'preparer', 'reference', 'horaires', 'realisations']}
   image={encre01}
-  imageAlt="Visuel provisoire : volutes d'encre claire sur fond noir."
+  imageAlt="Visuel provisoire d'encre pour la page tatoueur à Thiers : volutes claires sur fond noir."
   related={{ label: 'Piercing à Thiers', path: '/piercing-thiers' }}
 />

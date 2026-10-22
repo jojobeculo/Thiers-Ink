@@ -44,16 +44,17 @@ import { PUBLIC_STATIC_PREVIEW } from 'astro:env/client';
     <form
       class="form"
       method="post"
-      action={withBase('/api/rendez-vous')}
-      enctype="multipart/form-data"
+      action={PUBLIC_STATIC_PREVIEW ? `mailto:${site.email}` : withBase('/api/rendez-vous')}
+      enctype={PUBLIC_STATIC_PREVIEW ? 'text/plain' : 'multipart/form-data'}
       data-booking-form
+      data-static={PUBLIC_STATIC_PREVIEW ? '' : undefined}
       aria-describedby="form-required"
     >
       {
         PUBLIC_STATIC_PREVIEW && (
           <p class="form__preview" role="note">
-            Version de démonstration hébergée sans serveur : l'envoi en ligne n'est pas actif ici. Pour prendre
-            rendez-vous, appelez le salon au <a class="link" href={site.phone.href}>{site.phone.display}</a>.
+            Sur cette version, votre demande est préparée dans votre messagerie : il ne reste qu'à l'envoyer. Vous pouvez
+            aussi appeler le salon au <a class="link" href={site.phone.href}>{site.phone.display}</a>.
           </p>
         )
       }
@@ -188,7 +189,7 @@ import { PUBLIC_STATIC_PREVIEW } from 'astro:env/client';
 
       <div class="form__actions">
         <button class="btn form__submit" type="submit" data-submit>
-          <span data-submit-label>Envoyer la demande</span>
+          <span data-submit-label>{PUBLIC_STATIC_PREVIEW ? 'Préparer ma demande par e-mail' : 'Envoyer la demande'}</span>
           <svg class="btn__arrow" viewBox="0 0 14 14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2">
             <path d="M1 7h11M8 3l4 4-4 4"></path>
           </svg>
@@ -223,9 +224,16 @@ import { PUBLIC_STATIC_PREVIEW } from 'astro:env/client';
   .booking__intro {
     grid-column: 1 / span 5;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 28px;
     position: sticky;
     top: calc(var(--header-h) + 32px);
+    container-type: inline-size;
+  }
+
+  /* « rendez-vous » occupe environ 6,2 em : le titre suit la largeur de sa colonne */
+  .booking__intro :global(h2) {
+    font-size: min(var(--fs-display), 15cqi);
   }
 
   .booking__contact > div {
@@ -252,6 +260,7 @@ import { PUBLIC_STATIC_PREVIEW } from 'astro:env/client';
   .form {
     grid-column: 7 / -1;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 24px;
   }
 
@@ -462,6 +471,7 @@ import { PUBLIC_STATIC_PREVIEW } from 'astro:env/client';
     display: flex;
     align-items: center;
     gap: 14px;
+    flex-wrap: wrap;
     min-height: 48px;
     padding: 6px;
     border: 1px dashed var(--control-border);
@@ -560,6 +570,9 @@ import { PUBLIC_STATIC_PREVIEW } from 'astro:env/client';
     }
     .form__submit {
       width: 100%;
+      justify-content: center;
+      white-space: normal;
+      text-align: center;
     }
   }
 </style>

@@ -44,7 +44,7 @@ const letters = site.name.split('');
   <div class="hero__inner">
     <div class="hero__lead">
       <p class="hero__intro t-body-lg">
-        Salon de tatouage et de piercing à {site.address.city} (Puy-de-Dôme), au {site.address.street}.
+        Tatoueur et piercing à {site.address.city} (Puy-de-Dôme) : salon de tatouage au {site.address.street}.
       </p>
       <div class="hero__actions">
         <BookingButton size="lg" class="hero__cta" />
@@ -59,7 +59,7 @@ const letters = site.name.split('');
         <span>{site.address.city} — {site.address.region}</span>
       </div>
       <h1 class="hero__title" id="hero-title">
-        <span class="sr-only">{site.name}, tatouage et piercing à {site.address.city}</span>
+        <span class="sr-only">{site.name} — tatoueur et piercing à {site.address.city} (Puy-de-Dôme)</span>
         <span class="hero__wordmark" aria-hidden="true">
           {letters.map((ch, i) => <span class="hero__char" style={`--ci:${i}`}>{ch}</span>)}
         </span>

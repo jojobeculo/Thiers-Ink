@@ -10,8 +10,9 @@ export interface Service {
   items: string[];
   preview: ImageMetadata;
   previewAlt: string;
-  /** Page dédiée (référencement local). */
+  /** Page dédiée (référencement local) et texte du lien qui y mène. */
   path: string;
+  linkLabel: string;
 }
 
 // Prestations relevées sur les sources publiques : tatouage et piercing
@@ -26,7 +27,8 @@ export const services: Service[] = [
     items: ['Motif', 'Emplacement', 'Taille', 'Style'],
     preview: encre01,
     previewAlt: '',
-    path: '/tatouage-thiers',
+    path: '/tatoueur-thiers',
+    linkLabel: 'Tatoueur à Thiers : tout savoir',
   },
   {
     id: 'piercing',
@@ -36,5 +38,6 @@ export const services: Service[] = [
     preview: dotwork,
     previewAlt: '',
     path: '/piercing-thiers',
+    linkLabel: 'Piercing à Thiers : tout savoir',
   },
 ];

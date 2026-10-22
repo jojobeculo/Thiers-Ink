@@ -13,7 +13,7 @@ export const site = {
   activity: 'Tatouage & piercing',
   locale: 'fr_FR',
   description:
-    'Salon de tatouage et de piercing à Thiers (Puy-de-Dôme), 43 rue des Docteurs-Dumas. Tatouage, piercing oreille, nez et corps. Rendez-vous en ligne ou au 06 12 80 09 89.',
+    'Tatoueur et piercing à Thiers (63) : salon THIERSINK, 43 rue des Docteurs-Dumas. Tatouage personnalisé, piercing oreille, nez, corps. RDV au 06 12 80 09 89.',
 
   /** Responsable : Anthony Degoul (registre national des entreprises, entreprise individuelle). */
   owner: {

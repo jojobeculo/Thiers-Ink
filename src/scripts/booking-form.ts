@@ -6,6 +6,10 @@
 import { site } from '../config/site';
 import {
   LIMITS,
+  REQUEST_TYPES,
+  SIZES,
+  isRequestType,
+  isSize,
   clean,
   validateFields,
   validateFileMeta,
@@ -21,6 +25,10 @@ if (form) {
   const status = form.querySelector<HTMLElement>('[data-form-status]')!;
   const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
   const submitLabel = form.querySelector<HTMLElement>('[data-submit-label]')!;
+  const idleLabel = submitLabel.textContent ?? 'Envoyer la demande';
+  // Hébergement sans serveur (aperçu GitHub Pages) : la demande validée est préparée
+  // dans la messagerie du visiteur, qui l'envoie lui-même au salon.
+  const isStatic = form.hasAttribute('data-static');
   const started = form.querySelector<HTMLInputElement>('[data-started]');
   const fileInput = form.querySelector<HTMLInputElement>('input[type="file"]');
   const fileName = form.querySelector<HTMLElement>('[data-file-name]');
@@ -122,6 +130,35 @@ if (form) {
     if (attempted && name) showErrors(collect(), name);
   });
 
+  /* Brouillon d'e-mail (hébergement sans serveur) ---------------------------- */
+  function openMailDraft(f: ReturnType<typeof read>) {
+    const type = isRequestType(f.type) ? REQUEST_TYPES[f.type] : f.type;
+    const lines = [
+      'Bonjour,',
+      '',
+      `Je souhaite prendre rendez-vous (${type.toLowerCase()}).`,
+      '',
+      `Nom : ${f.nom}`,
+      `E-mail : ${f.email}`,
+      f.telephone ? `Téléphone : ${f.telephone}` : '',
+      f.zone ? `Zone du corps : ${f.zone}` : '',
+      isSize(f.taille) ? `Taille approximative : ${SIZES[f.taille]}` : '',
+      f.style ? `Style souhaité : ${f.style}` : '',
+      '',
+      'Projet :',
+      f.message.slice(0, 1500),
+    ].filter((line, i, all) => line !== '' || all[i - 1] !== '');
+    const subject = `Demande de rendez-vous — ${type} — ${f.nom}`;
+    const href = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+    window.location.href = href;
+    const withFile = Boolean(fileInput?.files?.length);
+    setStatus(
+      `Votre messagerie s'ouvre avec la demande pré-remplie : vérifiez-la puis envoyez-la.${withFile ? ' Pensez à y joindre votre image de référence.' : ''} Si rien ne s'ouvre, écrivez à ${site.email} ou appelez le ${site.phone.display}.`,
+      'info',
+      true,
+    );
+  }
+
   /* Envoi ------------------------------------------------------------------- */
   let sending = false;
   form.addEventListener('submit', async (e) => {
@@ -137,6 +174,11 @@ if (form) {
         'error',
       );
       controlsFor(invalid[0])[0]?.focus();
+      return;
+    }
+
+    if (isStatic) {
+      openMailDraft(read());
       return;
     }
 
@@ -188,7 +230,7 @@ if (form) {
     } finally {
       sending = false;
       submit.removeAttribute('aria-busy');
-      submitLabel.textContent = 'Envoyer la demande';
+      submitLabel.textContent = idleLabel;
     }
   });
 }

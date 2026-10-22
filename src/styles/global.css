@@ -378,6 +378,8 @@ html.js:not([data-motion='reduced']) .btn--solid:hover::after {
   gap: 8px;
   text-decoration: none;
   padding-block: 4px;
+  /* cible tactile d'au moins 24 px (WCAG 2.2, 2.5.8), même en petit corps */
+  min-height: 24px;
   background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
   transition: background-size var(--dur-base) var(--ease-editorial);
 }

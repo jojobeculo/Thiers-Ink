@@ -50,7 +50,10 @@ const jsonLd = [breadcrumbJsonLd([{ name: 'Accueil', path: '/' }, { name: headin
   }
 
   .legal__title {
-    font-size: clamp(2.6rem, 1.4rem + 5.5vw, var(--text-display));
+    /* « Confidentialité » tient sur une ligne dès 320 px */
+    font-size: clamp(2.125rem, 1rem + 5.6vw, var(--text-display));
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
 
   .legal__body {

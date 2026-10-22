@@ -111,7 +111,7 @@ const routes = [
           <ExternalIcon />
         </a>
         <figcaption class="map__credit">
-          © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">contributeurs OpenStreetMap</a>
+          © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">contributeurs OpenStreetMap<span class="sr-only"> (nouvel onglet)</span></a>
         </figcaption>
       </figure>
     </div>
@@ -403,6 +403,9 @@ const routes = [
   }
 
   .map__credit a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
     color: inherit;
   }
 

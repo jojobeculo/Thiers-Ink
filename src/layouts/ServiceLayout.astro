@@ -23,7 +23,12 @@ interface Step {
 
 interface Props {
   path: string;
+  /** Libellé affiché (fil d'Ariane, bandeau) : « Tatoueur », « Piercing ». */
   name: string;
+  /** Type de prestation déclaré dans les données structurées. */
+  serviceType?: string;
+  aboutHeading: string[];
+  about: string[];
   title: string;
   description: string;
   heading: string[];
@@ -37,11 +42,27 @@ interface Props {
   related: { label: string; path: string };
 }
 
-const { path, name, title, description, heading, lead, items, steps, tips, faqIds, image, imageAlt, related } =
-  Astro.props;
+const {
+  path,
+  name,
+  serviceType = name,
+  aboutHeading,
+  about,
+  title,
+  description,
+  heading,
+  lead,
+  items,
+  steps,
+  tips,
+  faqIds,
+  image,
+  imageAlt,
+  related,
+} = Astro.props;
 const questions = faq.filter((f) => faqIds.includes(f.id) && !f.draft);
 const jsonLd = [
-  serviceJsonLd(name, description, path, Astro.site),
+  serviceJsonLd(serviceType, description, path, Astro.site),
   breadcrumbJsonLd(
     [
       { name: 'Accueil', path: '/' },
@@ -83,8 +104,18 @@ const towns = site.areaServed.filter((t) => t !== site.address.city && t !== sit
       </div>
     </header>
 
-    <section class="section svc__steps" data-surface="light" data-plane aria-labelledby="etapes">
+    <section class="section svc__steps" data-surface="light" data-plane aria-labelledby="a-propos">
       <div class="container">
+        <div class="svc__about">
+          <SplitHeading id="a-propos" class="t-heading-lg" lines={aboutHeading} />
+          <div class="prose svc__about-text">
+            {about.map((p, i) => <p class={i === 0 ? 't-body-lg' : ''} data-reveal="fade" style={`--i:${i}`}>{p}</p>)}
+            <div class="svc__actions" data-reveal="fade" style="--i:2">
+              <BookingButton />
+              <CallButton withNumber={false} />
+            </div>
+          </div>
+        </div>
         <SplitHeading id="etapes" class="t-heading-lg" lines={['Comment se passe', 'une demande ?']} />
         <ol class="steps" role="list">
           {
@@ -234,6 +265,23 @@ const towns = site.areaServed.filter((t) => t !== site.address.city && t !== sit
     align-self: end;
   }
 
+  .svc__about {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 24px var(--gap);
+    margin-bottom: var(--section-space);
+  }
+
+  .svc__about > :global(h2) {
+    grid-column: 1 / span 5;
+  }
+
+  .svc__about-text {
+    grid-column: 7 / -1;
+    display: grid;
+    gap: 18px;
+  }
+
   .steps {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
@@ -361,6 +409,8 @@ const towns = site.areaServed.filter((t) => t !== site.address.city && t !== sit
     .svc__lead,
     .svc__head-grid :global(.svc__image),
     .svc__tips-grid > :global(h2),
+    .svc__about > :global(h2),
+    .svc__about-text,
     .svc__visit-grid > div,
     .tips,
     .svc__facts {

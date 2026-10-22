@@ -49,7 +49,7 @@ export function businessJsonLd(siteUrl?: URL): Json {
     founder: { '@type': 'Person', name: site.owner.name },
     knowsAbout: ['Tatouage', 'Piercing', "Piercing d'oreille", 'Piercing du nez', 'Piercing corporel'],
     makesOffer: [
-      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Tatouage', url: absolute('/tatouage-thiers', siteUrl) } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Tatouage', url: absolute('/tatoueur-thiers', siteUrl) } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Piercing', url: absolute('/piercing-thiers', siteUrl) } },
     ],
     // Instagram n'est déclaré qu'une fois confirmé par le propriétaire.

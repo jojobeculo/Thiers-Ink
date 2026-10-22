@@ -22,7 +22,7 @@ const full = [
 ];
 
 const pages = [
-  { path: '/tatouage-thiers', label: 'Tatouage à Thiers' },
+  { path: '/tatoueur-thiers', label: 'Tatoueur à Thiers' },
   { path: '/piercing-thiers', label: 'Piercing à Thiers' },
 ];
 ---
@@ -484,9 +484,15 @@ const pages = [
     transform: none;
   }
 
-  @media (max-width: 720px) {
+  .booking-dock {
+    display: flex;
+  }
+
+  @media (min-width: 721px) {
     .booking-dock {
-      display: flex;
+      left: auto;
+      right: 24px;
+      bottom: 24px;
     }
   }
 
