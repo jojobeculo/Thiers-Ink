@@ -56,14 +56,14 @@ import { site } from '../config/site';
 
   .nf__title {
     display: grid;
-    gap: 20px;
+    gap: clamp(20px, 3vw, 36px);
   }
 
   .nf__num {
     font-family: var(--font-serif);
     font-weight: var(--font-weight-light);
     font-size: clamp(8rem, 30vw, 26rem);
-    line-height: 0.75;
+    line-height: 0.9;
     letter-spacing: -0.06em;
   }
 

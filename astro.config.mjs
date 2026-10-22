@@ -2,11 +2,16 @@
 import { defineConfig, envField, fontProviders } from 'astro/config';
 import node from '@astrojs/node';
 import sitemap from '@astrojs/sitemap';
+import { createHash } from 'node:crypto';
+import { MOTION_TIER_SCRIPT } from './src/scripts/motion-tier.inline.mjs';
 
 // Domaine définitif du site (ex. https://www.thiersink.fr), lu au moment du build.
 // Tant qu'il n'est pas renseigné : pas d'URL canonique, pas d'URL absolue Open Graph
 // et pas de sitemap. Voir docs/A-CONFIRMER.md.
 const site = process.env.SITE_URL?.replace(/\/$/, '') || undefined;
+
+/** @type {`sha256-${string}`} */
+const motionTierHash = `sha256-${createHash('sha256').update(MOTION_TIER_SCRIPT).digest('base64')}`;
 
 export default defineConfig({
   site,
@@ -15,7 +20,8 @@ export default defineConfig({
   trailingSlash: 'never',
   build: {
     format: 'file',
-    inlineStylesheets: 'auto',
+    // CSS intégrée aux pages : aucune feuille bloquante à télécharger avant le rendu.
+    inlineStylesheets: 'always',
   },
   integrations: site
     ? [
@@ -29,6 +35,28 @@ export default defineConfig({
     // Derrière un proxy HTTPS, Astro ne fait confiance aux en-têtes X-Forwarded-*
     // (hôte, protocole, IP du visiteur) que pour le domaine déclaré.
     allowedDomains: site ? [{ hostname: new URL(site).hostname, protocol: 'https' }] : [],
+    // CSP émise en <meta> sur chaque page : empreintes des scripts et styles d'Astro.
+    // frame-ancestors et HSTS, impossibles en <meta>, sont ajoutés par server.mjs.
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com",
+        "font-src 'self'",
+        "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
+        'frame-src https://www.openstreetmap.org',
+        "base-uri 'self'",
+        "form-action 'self'",
+        "object-src 'none'",
+      ],
+      scriptDirective: {
+        resources: ["'self'", 'https://www.googletagmanager.com'],
+        hashes: [motionTierHash],
+      },
+      styleDirective: {
+        // attributs style="--i: 1" (délais d'animation) : seuls les attributs sont autorisés
+        resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }],
+      },
+    },
   },
   prefetch: false,
   devToolbar: { enabled: false },

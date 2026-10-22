@@ -113,9 +113,9 @@ if (form) {
   /* Validation au fil de la saisie, après un premier passage ---------------- */
   form.addEventListener('focusout', (e) => {
     const target = e.target as HTMLInputElement;
-    const name = target.name as FieldName;
-    if (!name || name === 'reference' || name === 'site_web') return;
-    if (attempted || target.value) showErrors(collect(), name);
+    const name = target.name;
+    if (!name || name === 'reference' || name === 'site_web' || name === 't') return;
+    if (attempted || target.value) showErrors(collect(), name as FieldName);
   });
   form.addEventListener('input', (e) => {
     const name = (e.target as HTMLInputElement).name as FieldName;

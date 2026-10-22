@@ -126,7 +126,7 @@ a {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: url('/textures/grain.png');
+  background-image: url('/textures/grain.webp');
   background-size: 160px;
   opacity: 0.06;
 }
@@ -166,11 +166,6 @@ a {
 
 .skip-link:focus {
   transform: none;
-}
-
-.rule {
-  border: 0;
-  border-top: 1px solid var(--rule);
 }
 
 /* Typographie -------------------------------------------------------------- */
@@ -215,22 +210,10 @@ a {
   letter-spacing: var(--tracking-heading-em);
 }
 
-.t-serif-italic {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: var(--font-weight-light);
-  text-transform: none;
-}
-
 .t-body-lg {
   font-size: var(--fs-body-lg);
   line-height: var(--leading-body-lg);
   letter-spacing: -0.006em;
-}
-
-.t-body {
-  font-size: var(--fs-body);
-  line-height: var(--leading-body);
 }
 
 .t-muted {
@@ -502,10 +485,6 @@ html.js[data-motion='full'] [data-reveal='mask']:not(.is-in) img {
   overflow: hidden;
   padding-bottom: 0.08em;
   margin-bottom: -0.08em;
-}
-
-.split-word {
-  display: inline-block;
 }
 
 html.js[data-motion='full'] [data-reveal='lines'] .split-inner,

@@ -2,6 +2,7 @@
 import { Font } from 'astro:assets';
 import '../styles/global.css';
 import { site } from '../config/site';
+import { MOTION_TIER_SCRIPT } from '../scripts/motion-tier.inline.mjs';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import ConsentBanner from '../components/ConsentBanner.astro';
@@ -56,48 +57,8 @@ const ogImage = Astro.site ? new URL('/og-thiersink.jpg', Astro.site).href : und
     <Font cssVariable="--font-satoshi" preload={[{ weight: 500, style: 'normal' }]} />
     <Font cssVariable="--font-cormorant" preload={[{ weight: 300, style: 'normal' }]} />
 
-    <!--
-      Niveau de mouvement, décidé avant le premier rendu :
-      full (ordinateur performant), lite (tactile, petit écran, appareil moyen),
-      reduced (préférence système ou du visiteur, appareil modeste, économie de données).
-      Aucune donnée n'est collectée ni envoyée.
-    -->
-    <script is:inline>
-      (function () {
-        var d = document.documentElement;
-        d.classList.add('js');
-        function mq(q) {
-          return !!(window.matchMedia && window.matchMedia(q).matches);
-        }
-        var pref = null;
-        try {
-          pref = localStorage.getItem('thiersink:motion');
-        } catch (e) {}
-        var n = navigator;
-        var c = n.connection || {};
-        var cores = n.hardwareConcurrency || 0;
-        var mem = n.deviceMemory || 0;
-        var tier = 'full';
-        if (
-          mq('(prefers-reduced-motion: reduce)') ||
-          !('IntersectionObserver' in window) ||
-          c.saveData ||
-          (cores && cores <= 2) ||
-          (mem && mem <= 2)
-        ) {
-          tier = 'reduced';
-        } else if (mq('(pointer: coarse)') || mq('(max-width: 820px)') || (cores && cores <= 4) || (mem && mem <= 4)) {
-          tier = 'lite';
-        }
-        window.__thiersinkAutoTier = tier;
-        if (pref === 'reduced') tier = 'reduced';
-        d.setAttribute('data-motion', tier);
-        // Filet de sécurité : sans module d'animation après 4 s, tout reste visible.
-        setTimeout(function () {
-          if (!window.__thiersinkMotion) d.removeAttribute('data-motion');
-        }, 4000);
-      })();
-    </script>
+    <!-- Niveau de mouvement décidé avant le premier rendu (voir motion-tier.inline.mjs). -->
+    <script is:inline set:html={MOTION_TIER_SCRIPT} />
 
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>

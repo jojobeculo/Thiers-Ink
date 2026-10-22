@@ -15,7 +15,7 @@ const analytics = Boolean(PUBLIC_GA_MEASUREMENT_ID);
 >
   <h2>Responsable du traitement</h2>
   <p>
-    {site.owner.name}, entrepreneur individuel exploitant l'atelier {site.name}, {fullAddress}. Contact :
+    {site.owner.name}, entrepreneur individuel exploitant l'atelier {site.name}, {fullAddress}. Contact :{' '}
     <a class="link" href={`mailto:${site.email}`}>{site.email}</a> ou <a class="link" href={site.phone.href}>{site.phone.display}</a>.
   </p>
 
@@ -133,7 +133,7 @@ const analytics = Boolean(PUBLIC_GA_MEASUREMENT_ID);
     Pour les exercer, écrivez à <a class="link" href={`mailto:${site.email}`}>{site.email}</a>.
   </p>
   <p>
-    Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL :
+    Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL :{' '}
     <a class="link" href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener noreferrer">cnil.fr<span class="sr-only"> (nouvel onglet)</span></a>.
   </p>
 </LegalLayout>

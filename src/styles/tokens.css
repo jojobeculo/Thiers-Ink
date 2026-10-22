@@ -104,7 +104,7 @@
   /* Variantes de contraste (WCAG 2.2 AA) des teintes de la référence. */
   --color-ash: #a39a8c; /* texte atténué sur onyx / midnight (≥ 5:1) */
   --color-espresso-aa: #544e47; /* texte secondaire sur parchemin (5,1:1) ; espresso = 4,2:1 */
-  --color-rust: #7d4c1e; /* safran adapté aux surfaces claires (4,5:1) */
+  --color-rust: #744618; /* safran adapté aux surfaces claires (5:1) */
 }
 
 /* 3. Couche sémantique -------------------------------------------------------
@@ -193,7 +193,6 @@
   --marquee-duration: 27s;
 
   --z-header: 50;
-  --z-menu: 60;
   --z-consent: 70;
   --z-cursor: 90;
 }

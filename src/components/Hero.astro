@@ -274,20 +274,20 @@ const letters = site.name.split('');
   :global(html.js[data-motion='full']) .hero__char,
   :global(html.js[data-motion='lite']) .hero__char {
     animation: char-in 1.3s var(--ease-out-expo) both;
-    animation-delay: calc(0.1s + var(--ci) * 0.055s);
+    animation-delay: calc(0.05s + var(--ci) * 0.045s);
   }
 
   :global(html.js[data-motion='full']) .hero__meta,
   :global(html.js[data-motion='lite']) .hero__meta,
   :global(html.js[data-motion='full']) .hero__lead > *,
   :global(html.js[data-motion='lite']) .hero__lead > * {
-    animation: rise-in 1.1s var(--ease-out-expo) both;
-    animation-delay: 0.55s;
+    animation: rise-in 1s var(--ease-out-expo) both;
+    animation-delay: 0.3s;
   }
 
   :global(html.js[data-motion='full']) .hero__lead > :nth-child(2),
   :global(html.js[data-motion='lite']) .hero__lead > :nth-child(2) {
-    animation-delay: 0.68s;
+    animation-delay: 0.4s;
   }
 
   :global(html.js[data-motion='full']) .hero__scroll-line::after {
