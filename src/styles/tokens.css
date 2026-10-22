@@ -1,0 +1,204 @@
+/* ==========================================================================
+   THIERSINK — Design tokens
+   1. Référence Amrit Palace (reprise intégrale, valeurs d'origine)
+   2. Extension Black Atelier (nouvelles teintes sombres, variantes AA)
+   3. Couche sémantique (surfaces sombres / éditoriales claires)
+   4. Échelle fluide, espacements, mouvement
+   ========================================================================== */
+
+/* 1. Référence Amrit Palace -------------------------------------------------- */
+:root {
+  /* Colors */
+  --color-parchment: #d8cbb8;
+  --color-linen: #bfb4a3;
+  --color-warm-stone: #b6ab9c;
+  --color-walnut: #978e81;
+  --color-espresso: #615b53;
+  --color-onyx-warm: #2c2c2c;
+  --color-midnight-roast: #292622;
+  --color-saffron-glow: #d49653;
+
+  /* Typography — Font Families
+     TT Ramillas Variable n'est pas licenciée pour ce projet : la famille est
+     servie par son substitut Cormorant Garamond (voir astro.config.mjs). */
+  --font-tt-ramillas-variable: var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
+  /* --font-satoshi est défini par l'API Fonts d'Astro (Satoshi, Fontshare). */
+
+  /* Typography — Scale */
+  --text-caption: 13px;
+  --leading-caption: 1.3;
+  --tracking-caption: -0.143px;
+  --text-body: 15px;
+  --leading-body: 1.4;
+  --tracking-body: -0.15px;
+  --text-body-lg: 26px;
+  --leading-body-lg: 1.2;
+  --tracking-body-lg: -0.156px;
+  --text-subheading: 42px;
+  --leading-subheading: 1;
+  --tracking-subheading: -1.68px;
+  --text-heading-sm: 50px;
+  --leading-heading-sm: 0.9;
+  --tracking-heading-sm: -1.5px;
+  --text-heading: 65px;
+  --leading-heading: 0.85;
+  --tracking-heading: -2.6px;
+  --text-heading-lg: 69px;
+  --leading-heading-lg: 0.9;
+  --tracking-heading-lg: -2.76px;
+  --text-display: 115px;
+  --leading-display: 0.8;
+  --tracking-display: -4.6px;
+
+  /* Typography — Weights */
+  --font-weight-light: 300;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* Spacing */
+  --spacing-4: 4px;
+  --spacing-5: 5px;
+  --spacing-6: 6px;
+  --spacing-7: 7px;
+  --spacing-8: 8px;
+  --spacing-10: 10px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-17: 17px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-32: 32px;
+  --spacing-42: 42px;
+  --spacing-92: 92px;
+  --spacing-206: 206px;
+
+  /* Layout (plages de la référence ; valeurs utilisables en section 4) */
+  --page-max-width: 1440px;
+  --section-gap: 120-160px;
+  --card-padding: 28px;
+  --element-gap: 12-16px;
+
+  /* Border Radius */
+  --radius-sm: 3px;
+
+  /* Named Radii */
+  --radius-tags: 3px;
+  --radius-cards: 0px;
+  --radius-inputs: 3px;
+  --radius-buttons: 3px;
+
+  /* Surfaces */
+  --surface-parchment-canvas: #d8cbb8;
+  --surface-linen: #bfb4a3;
+  --surface-midnight-roast: #292622;
+  --surface-onyx-warm: #2c2c2c;
+}
+
+/* 2. Extension Black Atelier ------------------------------------------------- */
+:root {
+  /* Noirs de l'atelier, plus profonds que midnight roast. */
+  --color-soot: #100f0e; /* noir charbon : fond principal */
+  --color-charcoal: #181715; /* charbon : surfaces sombres secondaires */
+  --color-graphite: #3b3833; /* filets décoratifs sur fond sombre */
+  /* Variantes de contraste (WCAG 2.2 AA) des teintes de la référence. */
+  --color-ash: #a39a8c; /* texte atténué sur onyx / midnight (≥ 5:1) */
+  --color-espresso-aa: #544e47; /* texte secondaire sur parchemin (5,1:1) ; espresso = 4,2:1 */
+  --color-rust: #7d4c1e; /* safran adapté aux surfaces claires (4,5:1) */
+}
+
+/* 3. Couche sémantique -------------------------------------------------------
+   Correspondances : surface sombre = soot / charcoal / midnight roast ;
+   surface éditoriale claire = parchment / linen. */
+:root,
+[data-surface='dark'] {
+  --bg: var(--color-soot);
+  --bg-raised: var(--color-charcoal);
+  --fg: var(--color-parchment); /* 12:1 */
+  --fg-muted: var(--color-walnut); /* 5,9:1 sur soot */
+  --rule: var(--color-graphite);
+  --rule-strong: var(--color-walnut);
+  --accent: var(--color-saffron-glow); /* 7,6:1 sur soot */
+  --control-border: var(--color-walnut);
+  --selection-bg: var(--color-saffron-glow);
+  --selection-fg: var(--color-soot);
+}
+
+[data-surface='charcoal'] {
+  --bg: var(--color-charcoal);
+  --bg-raised: var(--color-midnight-roast);
+  --fg: var(--color-parchment);
+  --fg-muted: var(--color-walnut); /* 5,5:1 */
+  --rule: var(--color-graphite);
+  --rule-strong: var(--color-walnut);
+  --accent: var(--color-saffron-glow);
+  --control-border: var(--color-walnut);
+}
+
+[data-surface='light'] {
+  --bg: var(--color-parchment);
+  --bg-raised: var(--color-linen);
+  --fg: var(--color-onyx-warm); /* 8,8:1 */
+  --fg-muted: var(--color-espresso-aa); /* 5,1:1 */
+  --rule: var(--color-warm-stone);
+  --rule-strong: var(--color-onyx-warm);
+  --accent: var(--color-rust);
+  --control-border: var(--color-onyx-warm);
+  --selection-bg: var(--color-onyx-warm);
+  --selection-fg: var(--color-parchment);
+}
+
+/* 4. Échelle fluide, espacements, mouvement ---------------------------------- */
+:root {
+  --font-serif: var(--font-tt-ramillas-variable);
+  --font-sans: var(--font-satoshi, ui-sans-serif, system-ui, sans-serif);
+
+  /* Titres serif (référence : 22 → 115 px), bornés pour les écrans étroits. */
+  --fs-display: clamp(3.25rem, 1.6rem + 7.4vw, var(--text-display)); /* 52 → 115 */
+  --fs-heading-lg: clamp(2.75rem, 1.7rem + 4.4vw, var(--text-heading-lg)); /* 44 → 69 */
+  --fs-heading: clamp(2.5rem, 1.6rem + 3.9vw, var(--text-heading)); /* 40 → 65 */
+  --fs-heading-sm: clamp(2.125rem, 1.5rem + 2.6vw, var(--text-heading-sm)); /* 34 → 50 */
+  --fs-subheading: clamp(1.75rem, 1.3rem + 1.9vw, var(--text-subheading)); /* 28 → 42 */
+  --fs-body-lg: clamp(1.25rem, 1.05rem + 0.9vw, var(--text-body-lg)); /* 20 → 26 */
+  --fs-body: var(--text-body);
+  --fs-small: 14px;
+  --fs-caption: 12px;
+
+  /* Mot-symbole (référence : Satoshi 500, 199 px) calé sur la largeur utile. */
+  --fs-wordmark: min(15.6vw, 199px);
+
+  --tracking-display-em: -0.04em;
+  --tracking-heading-em: -0.03em;
+  --tracking-ui: -0.01em;
+
+  /* Mise en page */
+  --gutter: clamp(16px, 4vw, 42px);
+  --container: min(100% - 2 * var(--gutter), var(--page-max-width));
+  --section-space: clamp(88px, 6rem + 4vw, 160px); /* 120-160 px sur ordinateur */
+  --gap: clamp(12px, 1vw + 8px, 16px);
+  --header-h: 72px;
+
+  /* Mouvement (courbe éditoriale de la référence) */
+  --ease-editorial: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-instant: 0.15s;
+  --dur-base: 0.4s;
+  --dur-reveal: 0.9s;
+  --dur-slow: 1.4s;
+  --stagger: 0.06s;
+  --marquee-duration: 27s;
+
+  --z-header: 50;
+  --z-menu: 60;
+  --z-consent: 70;
+  --z-cursor: 90;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --header-h: 64px;
+    --dur-reveal: 0.7s;
+    --stagger: 0.04s;
+  }
+}
