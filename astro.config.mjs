@@ -8,13 +8,14 @@ import { MOTION_TIER_SCRIPT } from './src/scripts/motion-tier.inline.mjs';
 // Domaine définitif du site (ex. https://www.thiersink.fr), lu au moment du build.
 // Tant qu'il n'est pas renseigné : pas d'URL canonique, pas d'URL absolue Open Graph
 // et pas de sitemap. Voir docs/A-CONFIRMER.md.
-const site = process.env.SITE_URL?.replace(/\/$/, '') || undefined;
+const site = 'https://jojobeculo.github.io';
 
 /** @type {`sha256-${string}`} */
 const motionTierHash = `sha256-${createHash('sha256').update(MOTION_TIER_SCRIPT).digest('base64')}`;
 
 export default defineConfig({
   site,
+  base: '/Thiers-Ink',
   output: 'static',
   adapter: node({ mode: 'standalone' }),
   trailingSlash: 'never',
